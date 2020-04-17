@@ -7,10 +7,10 @@ LDIR =../lib
 
 LIBS=-lm
 
-_DEPS = fsLow.h
+_DEPS = fsLow.h Directory.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o fsLow.o 
+_OBJ = main.o fsLow.o Directory.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 

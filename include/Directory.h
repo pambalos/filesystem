@@ -5,6 +5,7 @@
 #define FILESYSTEM_DIRECTORY_H
 
 #include <stdint.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "fsLow.h"
