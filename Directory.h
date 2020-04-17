@@ -1,12 +1,15 @@
 //
 // Created by Justice, Bradley on 3/17/20.
 //
-#ifndef FILEDIRECTORY_DIRECTORY_H
-#define FILEDIRECTORY_DIRECTORY_H
+#ifndef FILESYSTEM_DIRECTORY_H
+#define FILESYSTEM_DIRECTORY_H
 
 #include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include "fsLow.h"
 
-#define BLOCK_SIZE 512
+#define BLOCK_SIZE 4096
 
 enum FileType {
     txt, zip, sh, exe, pdf, bat
@@ -37,4 +40,6 @@ struct File_System_Info {
     struct Free_Blocks *Free_Blocks2;
 };
 
-#endif //FILEDIRECTORY_DIRECTORY_H
+struct File_System_Info *fsinit(int argc, char *argv[]);
+
+#endif //FILESYSTEM_DIRECTORY_H

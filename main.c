@@ -5,9 +5,10 @@
 #include <stdio.h>
 #include "Directory.h"
 
-int main() {
 
-    struct File_System_Info FileSystem;
+int main(int argc, char *argv[]) {
+
+    struct File_System_Info *FileSystem = fsinit(argc, argv);
 
     printf("Hello, World!\n");
     return 0;
