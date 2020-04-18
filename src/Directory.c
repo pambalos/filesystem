@@ -9,6 +9,8 @@ struct Dir_Entry *rootinit() {
     strcpy(root->name, "home");
     root->file_type = dir;
 
+    return root;
+    //Set up bin/ for commands maybe...
 }
 
 struct File_System_Info * fsinit(int argc, char *argv[]) {
@@ -27,10 +29,19 @@ struct File_System_Info * fsinit(int argc, char *argv[]) {
 
     retVal = startPartitionSystem(filename, &volumeSize, &blockSize);
     printf("Opened %s, Volume Size: %llu;  BlockSize: %llu; Return %d\n", filename, (ull_t)volumeSize, (ull_t)blockSize, retVal);
+
+    //On return
+    //// 		return value 0 = success;
+    ////		return value -1 = file exists but can not open for write
+    ////		return value -2 = insufficient space for the volume
+
     struct File_System_Info *fs = (struct File_System_Info *)malloc(sizeof(struct File_System_Info *));
 
     //initialize root directory, set root metadata
     struct Dir_Entry *root = rootinit();
+
+    //save root to fs struct
+    fs->root = root;
 
     //initializing file system info, free block structures and trackers
     struct Free_Blocks *Free_Blocks = (struct Free_Blocks *)malloc(sizeof(struct Free_Blocks *) + sizeof(int_fast8_t) * (volumeSize / blockSize));
@@ -51,6 +62,10 @@ struct File_System_Info * fsinit(int argc, char *argv[]) {
         *(Free_Blocks2->fbs+i) = 0;
     }
 
+    //save free block structs to fs struct
+    fs->Free_Blocks = Free_Blocks;
+    fs->Free_Blocks2 = Free_Blocks2;
+    fs->volume_id = 'C';
 
     /*
     char *buf = malloc(blockSize * 2);
@@ -71,6 +86,25 @@ struct File_System_Info * fsinit(int argc, char *argv[]) {
     free(buf);
     free(buf2);
 */
+    int size = sizeof(fs);
+    int size2 = sizeof(&fs);
+    int size3 = sizeof(*fs);
+    unsigned char *buffer = (char *)malloc(size3);
+    unsigned char *buffer2 = (char *)malloc(sizeof(*fs));
+    memset(buffer, 0, size3);
+    memcpy(buffer, fs, size3);
+    LBAwrite(buffer, sizeof(buffer)/BLOCK_SIZE, 1);
+    LBAread(buffer2, sizeof(buffer)/BLOCK_SIZE, 1);
+
+    if (memcmp(buffer, buffer2, sizeof(*fs)) == 0)
+    {
+        printf("Read/Write worked\n");
+    }
+    else
+        printf("FAILURE on Write/Read\n");
+
+    free(buffer);
+    free(buffer2);
     return fs;
 }
 

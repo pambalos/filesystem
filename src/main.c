@@ -15,8 +15,8 @@
 int main(int argc, char *argv[]) {
 
     struct File_System_Info *fs = fsinit(argc, argv);
-    closePartitionSystem();
 
+    closePartitionSystem();
     return 0;
 }
 

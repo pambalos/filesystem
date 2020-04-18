@@ -25,6 +25,7 @@ struct Dir_Entry {
     unsigned long int date_created;
     unsigned long int date_modified;
     unsigned long long size;
+    struct Dir_Entry *contents;
 };
 
 struct Free_Blocks {
@@ -35,9 +36,9 @@ struct Free_Blocks {
 struct File_System_Info {
     struct Dir_Entry *root;
     struct Dir_Entry **LBA;
-    unsigned long int volume_size;
+    uint64_t volume_size;
     char volume_name[30];
-    unsigned int volume_id;
+    char volume_id;
     struct Free_Blocks *Free_Blocks;
     struct Free_Blocks *Free_Blocks2;
 };
