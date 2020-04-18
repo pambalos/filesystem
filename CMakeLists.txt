@@ -13,6 +13,8 @@ include_directories(${APP_SRC})
 set(
         SOURCE_FILES
         ${APP_SRC}/main.c
+        ${APP_SRC}/fsLow.c
+        ${APP_SRC}/Directory.c
 )
 
 add_executable(untitled ${SOURCE_FILES})

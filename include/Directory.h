@@ -7,13 +7,14 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include "fsLow.h"
 
-#define BLOCK_SIZE 4096
+#define BLOCK_SIZE 512
 
 enum FileType {
-    txt, zip, sh, exe, pdf, bat
+    txt, zip, sh, exe, pdf, bat, dir
 };
 
 
@@ -28,7 +29,7 @@ struct Dir_Entry {
 
 struct Free_Blocks {
     long Num_Free_Blocks;
-    int_fast8_t Free_Blocks[];
+    int *fbs;
 };
 
 struct File_System_Info {
@@ -42,5 +43,18 @@ struct File_System_Info {
 };
 
 struct File_System_Info *fsinit(int argc, char *argv[]);
+
+struct Dir_Entry *rootinit();
+
+/**
+ * These methods were implemented by adjusting and using this online example's; http://www.mathcs.emory.edu/~cheung/Courses/255/Syllabus/1-C-intro/bit-array.html
+ * @param fbs free block bit map pointer
+ * @param k position
+ */
+void SetBit(int *fbs, int k);
+
+void ClearBit(int *fbs, int k);
+
+bool CheckBit(const int *fbs, int k);
 
 #endif //FILESYSTEM_DIRECTORY_H

@@ -4,6 +4,13 @@
 
 #include "Directory.h"
 
+struct Dir_Entry *rootinit() {
+    struct Dir_Entry *root = (struct Dir_Entry*)malloc(sizeof(struct Dir_Entry));
+    strcpy(root->name, "home");
+    root->file_type = dir;
+
+}
+
 struct File_System_Info * fsinit(int argc, char *argv[]) {
     //guess that here is where we want to initialize a bunch of stuff
     char *filename;
@@ -22,6 +29,27 @@ struct File_System_Info * fsinit(int argc, char *argv[]) {
     printf("Opened %s, Volume Size: %llu;  BlockSize: %llu; Return %d\n", filename, (ull_t)volumeSize, (ull_t)blockSize, retVal);
     struct File_System_Info *fs = (struct File_System_Info *)malloc(sizeof(struct File_System_Info *));
 
+    //initialize root directory, set root metadata
+    struct Dir_Entry *root = rootinit();
+
+    //initializing file system info, free block structures and trackers
+    struct Free_Blocks *Free_Blocks = (struct Free_Blocks *)malloc(sizeof(struct Free_Blocks *) + sizeof(int_fast8_t) * (volumeSize / blockSize));
+    struct Free_Blocks *Free_Blocks2 = (struct Free_Blocks *)malloc(sizeof(struct Free_Blocks *) + sizeof(int_fast8_t) * (volumeSize / blockSize));
+    Free_Blocks->Num_Free_Blocks = volumeSize / blockSize;
+    Free_Blocks2->Num_Free_Blocks = volumeSize / blockSize;
+
+    //fbs are free block array bit maps. http://www.mathcs.emory.edu/~cheung/Courses/255/Syllabus/1-C-intro/bit-array.html has implementation details
+    Free_Blocks->fbs = (int *)malloc(sizeof(int) * ((volumeSize / blockSize)/32)); // Take a look at link^ to understand why its /32
+    Free_Blocks2->fbs = (int *)malloc(sizeof(int) * ((volumeSize / blockSize)/32));
+
+    //Now we need to set all the bits to 0 for free
+    for (int i = 0; i < (Free_Blocks->Num_Free_Blocks); i++) {
+        *(Free_Blocks->fbs+i) = 0;
+    }
+
+    for (int i = 0; i < (Free_Blocks2->Num_Free_Blocks); i++) {
+        *(Free_Blocks2->fbs+i) = 0;
+    }
 
 
     /*
@@ -44,4 +72,44 @@ struct File_System_Info * fsinit(int argc, char *argv[]) {
     free(buf2);
 */
     return fs;
+}
+
+void SetBit(int *fbs, int k) {
+    unsigned int i = k/32;            // i = array index (use: fbs[i])
+    unsigned int pos = k%32;          // pos = bit position in fbs[i]
+
+    unsigned int flag = 1;   // flag = 0000.....00001
+
+    flag = flag << pos;      // flag = 0000...010...000   (shifted k positions)
+
+    *(fbs+i) = *(fbs+i) | flag;      // Set the bit at the k-th position in fbs[i]
+}
+
+void ClearBit(int *fbs, int k) {
+    unsigned int i = k/32;
+    unsigned int pos = k%32;
+
+    unsigned int flag = 1;  // flag = 0000.....00001
+
+    flag = flag << pos;     // flag = 0000...010...000   (shifted k positions)
+    flag = ~flag;           // flag = 1111...101..111
+
+    *(fbs+i) = *(fbs+i) & flag;     // RESET the bit at the k-th position in A[i]
+}
+
+bool CheckBit(const int *fbs, int k) {
+    unsigned int i = k/32;
+    unsigned int pos = k%32;
+
+    unsigned int flag = 1;  // flag = 0000.....00001
+
+    flag = flag << pos;     // flag = 0000...010...000   (shifted k positions)
+
+    if ( *(fbs+i) & flag ) {
+        // k-th bit is 1
+        return true;
+    } else {
+        // k-th bit is 0
+        return false;
+    }
 }
