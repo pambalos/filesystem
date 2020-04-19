@@ -16,7 +16,7 @@ struct Dir_Entry *rootinit() {
 }
 
 int tryOpen() {
-    char *buffer2 = malloc(sizeof(struct Free_Blocks)+8);
+    char *buffer2 = malloc(sizeof(struct Free_Blocks)+2);
     LBAread(buffer2, sizeof(struct Free_Blocks)/BLOCK_SIZE+1, 1);
     struct Free_Blocks *testD = deserialize_fbs(buffer2);
     //serialiazation testing...
@@ -51,7 +51,7 @@ struct File_System_Info * fsinit(int argc, char *argv[]) {
     printf("Opened %s, Volume Size: %llu;  BlockSize: %llu; Return %d\n", filename, (ull_t)volumeSize, (ull_t)blockSize, retVal);
     if (retVal == 0) {
         //if successfully opened, try to get the root data from LBA 1...
-        //int open = tryOpen();
+        int open = tryOpen();
     }
     //On return
     //// 		return value 0 = success;
@@ -202,7 +202,6 @@ char* serialize_fbs(const struct Free_Blocks *Free_Blocks) {
 }
 
 struct Free_Blocks* deserialize_fbs(char *buffer) {
-
     int Num_Free_Blocks;
     memcpy(&Num_Free_Blocks, buffer, sizeof(int));
     int *efbs = malloc(sizeof(int) * ((Num_Free_Blocks)/32 + 1));
