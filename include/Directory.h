@@ -29,7 +29,7 @@ struct Dir_Entry {
 };
 
 struct Free_Blocks {
-    long Num_Free_Blocks;
+    int Num_Free_Blocks;
     int *fbs;
 };
 
@@ -46,6 +46,16 @@ struct File_System_Info {
 struct File_System_Info *fsinit(int argc, char *argv[]);
 
 struct Dir_Entry *rootinit();
+
+char* serialize_fs(const struct File_System_Info *fs);
+
+char* serialize_de(const struct Dir_Entry *fs);
+
+char* serialize_fbs(const struct Free_Blocks *Free_Blocks);
+
+struct Free_Blocks* deserialize_fbs(char *buffer);
+
+int tryOpen();
 
 /**
  * These methods were implemented by adjusting and using this online example's; http://www.mathcs.emory.edu/~cheung/Courses/255/Syllabus/1-C-intro/bit-array.html
