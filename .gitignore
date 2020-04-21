@@ -1,2 +1,7 @@
 .idea
 cmake-build-debug
+<<<<<<< HEAD
+=======
+.vscode
+**/obj/
+>>>>>>> a5fa7720fb0eae3770c7d9dccf7c7bd47a7648bc
