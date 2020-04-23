@@ -35,7 +35,6 @@ struct Free_Blocks {
 
 struct File_System_Info {
     struct Dir_Entry *root;
-    struct Dir_Entry **LBA;
     uint64_t volume_size;
     char volume_name[30];
     char volume_id;
@@ -51,7 +50,7 @@ char* serialize_fs(const struct File_System_Info *fs);
 
 char* serialize_de(const struct Dir_Entry *fs);
 
-char* serialize_fbs(const struct Free_Blocks *Free_Blocks);
+char* serialize_fbs(struct Free_Blocks *Free_Blocks);
 
 struct Free_Blocks* deserialize_fbs(char *buffer);
 
@@ -66,6 +65,6 @@ void SetBit(int *fbs, int k);
 
 void ClearBit(int *fbs, int k);
 
-bool CheckBit(const int *fbs, int k);
+bool CheckBit(int *fbs, int k);
 
 #endif //FILESYSTEM_DIRECTORY_H

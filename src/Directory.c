@@ -51,7 +51,8 @@ struct File_System_Info * fsinit(int argc, char *argv[]) {
     printf("Opened %s, Volume Size: %llu;  BlockSize: %llu; Return %d\n", filename, (ull_t)volumeSize, (ull_t)blockSize, retVal);
     if (retVal == 0) {
         //if successfully opened, try to get the root data from LBA 1...
-        int open = tryOpen();
+        //int open = tryOpen();
+
     }
     //On return
     //// 		return value 0 = success;
@@ -82,18 +83,8 @@ struct File_System_Info * fsinit(int argc, char *argv[]) {
     for (int i = 0; i < (Free_Blocks->Num_Free_Blocks)/32 + 1; i++) {
         *(Free_Blocks->fbs+i) = 0;
     }
-    /*
-    if ( CheckBit(Free_Blocks->fbs, 0) ) {
-        printf("Bit %d was set !\n", 0);
-    } else {
-        printf("Bit %d was NOT set !\n", 0);
-    }
-    SetBit(Free_Blocks->fbs, 0);
-    if ( CheckBit(Free_Blocks->fbs, 0) ) {
-        printf("Bit %d was set !\n", 0);
-    } else {
-        printf("Bit %d was NOT set !\n", 0);
-    } */
+
+
     SetBit(Free_Blocks->fbs, 0);
     if ( CheckBit(Free_Blocks->fbs, 0) ) {
         printf("Bit %d was set !\n", 0);
@@ -109,18 +100,7 @@ struct File_System_Info * fsinit(int argc, char *argv[]) {
     for (int i = 0; i < (Free_Blocks2->Num_Free_Blocks)/32 + 1; i++) {
         *(Free_Blocks2->fbs+i) = 0;
     }
-    /*
-    if ( CheckBit(Free_Blocks2->fbs, 0) ) {
-        printf("Bit %d was set !\n", 0);
-    } else {
-        printf("Bit %d was NOT set !\n", 0);
-    }
-    SetBit(Free_Blocks2->fbs, 0);
-    if ( CheckBit(Free_Blocks2->fbs, 0) ) {
-        printf("Bit %d was set !\n", 0);
-    } else {
-        printf("Bit %d was NOT set !\n", 0);
-    } */
+
 
     //save free block structs to fs struct
     fs->Free_Blocks = Free_Blocks;
@@ -128,35 +108,30 @@ struct File_System_Info * fsinit(int argc, char *argv[]) {
     fs->volume_id = 'C';
     strcpy(fs->volume_name, filename);
 
-    /*
-    char *buf = malloc(blockSize * 2);
-    char *buf2 = malloc(blockSize * 2);
-    memset(buf, 0, blockSize * 2); // setting all values in buf to 0
-    strcpy(buf, "Now is the time for all good people to come to the aid of their countrymen\n");
-    strcpy(&buf[blockSize + 10], "Four score and seven years ago our fathers brought forth onto this continent a new nation\n");
-    LBAwrite(buf, 2, 0);
-    LBAwrite(buf, 2, 3);
-    LBAread(buf2, 2, 0);
-    if (memcmp(buf, buf2, blockSize * 2) == 0)
-    {
-        printf("Read/Write worked\n");
-    }
-    else
-        printf("FAILURE on Write/Read\n");
-
-    free(buf);
-    free(buf2);
-*/
 
     char* srl = serialize_fbs(Free_Blocks);
+
+    printf("after deserialization\n");
+    struct Free_Blocks *testD = deserialize_fbs(srl);
+    if ( CheckBit(testD->fbs, 0) ) {
+        printf("Bit %d was set !\n", 0);
+    } else {
+        printf("Bit %d was NOT set !\n", 0);
+    }
+    if ( CheckBit(testD->fbs, 1) ) {
+        printf("Bit %d was set !\n", 1);
+    } else {
+        printf("Bit %d was NOT set !\n", 1);
+    }
+    /*
     int s1 = sizeof(Free_Blocks); //size is 8 bytes
 
-    char *buffer = malloc(sizeof(Free_Blocks)+2);
+    char *buffer = malloc(BLOCK_SIZE*2);
     char *buffer2 = malloc(sizeof(Free_Blocks)+2);
     memset(buffer, 0, sizeof(Free_Blocks));
     memcpy(buffer, srl, sizeof(Free_Blocks));
-    LBAwrite(buffer, sizeof(Free_Blocks)/BLOCK_SIZE+1, 1);
-    LBAread(buffer2, sizeof(Free_Blocks)/BLOCK_SIZE+1, 1);
+    LBAwrite(buffer, 2, 1);
+    LBAread(buffer2, 2, 1);
 
     if (memcmp(buffer, buffer2, sizeof(Free_Blocks)) == 0)
     {
@@ -164,6 +139,7 @@ struct File_System_Info * fsinit(int argc, char *argv[]) {
     }
     else
         printf("FAILURE on Write/Read\n");
+
 
     struct Free_Blocks *testD = deserialize_fbs(buffer2);
      //serialiazation testing...
@@ -179,8 +155,10 @@ struct File_System_Info * fsinit(int argc, char *argv[]) {
         printf("Bit %d was NOT set !\n", 1);
     }
 
+
     free(buffer);
     free(buffer2);
+    */
     return fs;
 }
 
@@ -192,21 +170,21 @@ char* serialize_de(const struct Dir_Entry *fs) {
 
 }
 
-char* serialize_fbs(const struct Free_Blocks *Free_Blocks) {
-    int size = sizeof(int) + sizeof(int) * (Free_Blocks->Num_Free_Blocks/32 + 1);
+char* serialize_fbs(struct Free_Blocks *Free_Blocks) {
     char* buffer = malloc(sizeof(int) + sizeof(int) * (Free_Blocks->Num_Free_Blocks/32 + 1));
-    int is = sizeof(int);
     memcpy(buffer, &(Free_Blocks->Num_Free_Blocks), sizeof(int));
-    memcpy(buffer+sizeof(int), &(Free_Blocks->fbs), sizeof(int)*(Free_Blocks->Num_Free_Blocks/32 + 1));
+    memcpy(buffer+sizeof(int), Free_Blocks->fbs, sizeof(int)*(Free_Blocks->Num_Free_Blocks/32 + 1));
     return buffer;
 }
 
 struct Free_Blocks* deserialize_fbs(char *buffer) {
     int Num_Free_Blocks;
     memcpy(&Num_Free_Blocks, buffer, sizeof(int));
-    int *efbs = malloc(sizeof(int) * ((Num_Free_Blocks)/32 + 1));
-    memcpy(&efbs, (buffer + sizeof(int)), sizeof(int) * (Num_Free_Blocks/32 + 1));
-    struct Free_Blocks* res = (struct Free_Blocks*) malloc(sizeof(struct Free_Blocks*) +sizeof(int) * (Num_Free_Blocks/32 + 2));
+    int *efbs = (int*)malloc(sizeof(int) * ((Num_Free_Blocks)/32 + 1));
+    //Now we need to set all the bits to 0 for free
+    //memset(&efbs, 0, (Num_Free_Blocks)/32 + 1);
+    memcpy(efbs, (buffer + sizeof(int)), sizeof(int) * (Num_Free_Blocks/32 + 1));
+    struct Free_Blocks* res = (struct Free_Blocks*) malloc(sizeof(struct Free_Blocks*) +sizeof(int) * (Num_Free_Blocks/32 + 1));
     res->Num_Free_Blocks = Num_Free_Blocks;
     res->fbs = efbs;
     return res;
@@ -235,7 +213,7 @@ void ClearBit(int *fbs, int k) {
     *(fbs+i) = *(fbs+i) & flag;     // RESET the bit at the k-th position in A[i]
 }
 
-bool CheckBit(const int *fbs, int k) {
+bool CheckBit(int *fbs, int k) {
     unsigned int i = k/32;
     unsigned int pos = k%32;
 
