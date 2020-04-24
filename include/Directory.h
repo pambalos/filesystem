@@ -21,11 +21,12 @@ enum FileType {
 struct Dir_Entry {
     char name[30];
     enum FileType file_type;
-    unsigned char permissions;
+    int permissions;
     unsigned long int date_created;
     unsigned long int date_modified;
     unsigned long long size;
     struct Dir_Entry *contents;
+    uint64_t location;
 };
 
 struct Free_Blocks {
@@ -41,6 +42,10 @@ struct File_System_Info {
     struct Free_Blocks *Free_Blocks;
     struct Free_Blocks *Free_Blocks2;
 };
+
+struct File_System_Info *readExistingFs();
+
+struct File_System_Info *newFsInit();
 
 struct File_System_Info *fsinit(int argc, char *argv[]);
 
