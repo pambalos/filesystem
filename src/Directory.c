@@ -69,6 +69,8 @@ struct File_System_Info *newFsInit(char * filename, uint64_t volumeSize, uint64_
     fs->Free_Blocks2 = Free_Blocks2;
     fs->volume_id = 'C';
     strcpy(fs->volume_name, filename);
+
+    return fs;
 }
 
 struct File_System_Info * fsinit(int argc, char *argv[]) {

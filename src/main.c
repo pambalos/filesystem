@@ -15,7 +15,14 @@
 int main(int argc, char *argv[]) {
 
     struct File_System_Info *fs = fsinit(argc, argv);
+    while (true) {
+        //this is the input capture loop
+        //At this point, fs has been initialized fully with a root Dir_Entry
+        //Now need to capture 'ls' and 'cd' etc to do shit
 
+
+        break;
+    }
     closePartitionSystem();
     return 0;
 }
