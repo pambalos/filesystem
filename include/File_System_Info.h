@@ -5,7 +5,17 @@
 #ifndef FILESYSTEM_FILE_SYSTEM_INFO_H
 #define FILESYSTEM_FILE_SYSTEM_INFO_H
 
-struct File_System_Info;
+#include "fsLow.h"
+
+struct File_System_Info {
+    struct Dir_Entry *root;
+    uint64_t volume_size;
+    char volume_name[30];
+    char volume_id;
+    int blockSize;
+    struct Free_Blocks *Free_Blocks;
+    struct Free_Blocks *Free_Blocks2;
+};
 
 struct File_System_Info *readExistingFs();
 

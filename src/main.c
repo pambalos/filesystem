@@ -13,12 +13,14 @@
 #include <SystemCalls.h>
 #include <File_System_Info.h>
 #include <stdbool.h>
+#include <Dir_Entry.h>
 
 /**
  * This function will take the File_System_Info struct in memory and loop, capturing input and dispatching system calls
  * @param fs - the File_System_Info struct to hold the file system in memory
  */
 void startFileSystem(struct File_System_Info *fs) {
+    struct Dir_Entry *currentDir = fs->root;
 
     char inputBuffer[1024];
     while (true) {
@@ -61,7 +63,7 @@ void startFileSystem(struct File_System_Info *fs) {
             break;
         } else {
             //Pass input to a separate function...
-            parseInputIntoCommands(nSpaces, inputs);
+            currentDir = parseInputIntoCommands(currentDir, nSpaces, fs);
         }
     }
 }

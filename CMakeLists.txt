@@ -19,6 +19,8 @@ set(
         src/Dir_Entry.c
         src/Free_Blocks.c
         src/BitMap.c
+        src/SystemCalls.c
+        src/BlockManagementController.c
         )
 
 add_executable(untitled ${SOURCE_FILES})
