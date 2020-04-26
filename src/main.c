@@ -10,9 +10,14 @@
 #include <errno.h>
 #include <math.h>
 #include <fsLow.h>
-#include <Directory.h>
 #include <SystemCalls.h>
+#include <File_System_Info.h>
+#include <stdbool.h>
 
+/**
+ * This function will take the File_System_Info struct in memory and loop, capturing input and dispatching system calls
+ * @param fs - the File_System_Info struct to hold the file system in memory
+ */
 void startFileSystem(struct File_System_Info *fs) {
 
     char inputBuffer[1024];

@@ -14,8 +14,11 @@ set(
         SOURCE_FILES
         ${APP_SRC}/main.c
         ${APP_SRC}/fsLow.c
-        ${APP_SRC}/Directory.c
         ${APP_SRC}/SystemCalls.c
-)
+        src/File_System_Info.c
+        src/Dir_Entry.c
+        src/Free_Blocks.c
+        src/BitMap.c
+        )
 
 add_executable(untitled ${SOURCE_FILES})
