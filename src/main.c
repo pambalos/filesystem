@@ -11,16 +11,9 @@
 #include <math.h>
 #include <fsLow.h>
 #include <Directory.h>
+#include <SystemCalls.h>
 
-void parseInput(int n, char **args) {
-    int x = 0;
-    for (int i = 0; i < n; i++) {
-        printf("args[%d]: %s\n", i, args[i]);
-    }
-    int res = 0;
-}
-
-void captureInput(struct File_System_Info *fs) {
+void startFileSystem(struct File_System_Info *fs) {
 
     char inputBuffer[1024];
     while (true) {
@@ -63,7 +56,7 @@ void captureInput(struct File_System_Info *fs) {
             break;
         } else {
             //Pass input to a separate function...
-            parseInput(nSpaces, inputs);
+            parseInputIntoCommands(nSpaces, inputs);
         }
     }
 }
@@ -71,7 +64,7 @@ void captureInput(struct File_System_Info *fs) {
 int main(int argc, char *argv[]) {
 
     struct File_System_Info *fs = fsinit(argc, argv);
-    captureInput(fs);
+    startFileSystem(fs);
 
     closePartitionSystem();
     return 0;
