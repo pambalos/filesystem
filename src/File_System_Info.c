@@ -102,21 +102,42 @@ struct File_System_Info *newFsInit(char * filename, uint64_t volumeSize, uint64_
 }
 
 int tryOpen() {
-    char *buffer2 = malloc(1096);
-    LBAread(buffer2, 1, 0);
+    char *buffer2 = malloc(1000);
+    LBAread(buffer2, 1, -1);
     if (strcmp(buffer2, "") == 0) {
         printf("There is nothing here! - must initialize\n");
         return -1;
     } else {
-        printf("FOUND SOMETHING!\n");
-
+        printf("FOUND SOMETHING!\n"); //return 1 which will trigger read
         return 1;
     }
 }
 
 struct File_System_Info *readExistingFs() {
-    //currently we can read a Free_Blocks, need to do Dir_Entry then File_System_Info
+    //read existing system state into memory
+    char * buffer = malloc(1000);
 
+    memset(buffer, 0, 1000);
+    LBAread(buffer, 1, 0); //read file system object at 0
+    struct File_System_Info *preExistingFileSystem = deserialize_fs(buffer);
+
+    memset(buffer, 0, 1000);
+    LBAread(buffer, 1, 1); //read root dir_entry at 1
+    struct Dir_Entry *pastRoot = deserialize_de(buffer);
+
+    memset(buffer, 0, 1000);
+    LBAread(buffer, 1, 2); //read fbs1 at 2
+    struct Free_Blocks *freeBlocks1 = deserialize_fbs(buffer);
+
+    memset(buffer, 0, 1000);
+    LBAread(buffer, 1, 3); //read fbs2 at 3
+    struct Free_Blocks *freeBlocks2 = deserialize_fbs(buffer);
+
+    preExistingFileSystem->root = pastRoot;
+    preExistingFileSystem->Free_Blocks = freeBlocks1;
+    preExistingFileSystem->Free_Blocks2 = freeBlocks2;
+
+    return preExistingFileSystem;
 }
 
 char* serialize_fs(const struct File_System_Info *fs) {
