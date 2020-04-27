@@ -5,37 +5,80 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include<stdio.h>
+#include<time.h>
 #include "Dir_Entry.h"
 
-enum FileType {
-    txt, zip, sh, exe, pdf, bat, dir
-};
-
-struct Dir_Entry {
-    char name[30];
-    enum FileType file_type;
-    int permissions;
-    unsigned long int date_created;
-    unsigned long int date_modified;
-    unsigned long long size;
-    struct Dir_Entry **contents;
-    uint64_t location;
-};
 
 struct Dir_Entry *rootinit() {
     struct Dir_Entry *root = (struct Dir_Entry*)malloc(sizeof(struct Dir_Entry));
-    strcpy(root->name, "home");
-    root->file_type = dir;
+
+    strcpy(root->name, "home\n");
+    root->file_type = 6; //6 for dir
     root->location = 1;
+    root->permissions = 644;
+    time_t t;   // not a primitive datatype
+    time(&t);
+    root->date_created = malloc(sizeof(char) * 30);
+    root->date_modified = malloc(sizeof(char) * 30);
+    strcpy(root->date_created, ctime(&t));
+    strcpy(root->date_modified, root->date_created);
+    printf("\nThis program has been written at (date and time): %s", ctime(&t));
+    root->size = 0;
+    root->numFiles = 0;
+    root->fileLBAaddresses = NULL;
+
+    char * srlzde = serialize_de(root);
+    struct Dir_Entry *testDe = deserialize_de(srlzde);
+
     return root;
     //Set up bin/ for commands maybe...
 }
 
 char* serialize_de(const struct Dir_Entry *fs) {
-    char* buffer = malloc(
-            (sizeof(char) * 30) + //name
-            (sizeof(int) * 1) + //file_type
+    int size = (sizeof(char) * 30) + //name
+            (sizeof(enum FileType) * 1) + //file_type
             (sizeof(int) * 1) + //permissions
-            (sizeof(unsigned long int) )
-    );
+            (sizeof(char) * 30) + //date_created
+            (sizeof(char) * 30) + //date_created
+            (sizeof(unsigned long long) * 1) + //size
+            (sizeof(int) * 1) + //numFiles
+            (sizeof(uint64_t) * 1) + //location
+            (sizeof(uint64_t) * fs->numFiles);
+
+    char* buffer = (char *) malloc(size);
+    memset(buffer, 0, size);
+
+    memcpy(buffer, &fs->name, strlen(fs->name));
+    memcpy(buffer+30, &fs->file_type, sizeof(fs->file_type));
+    memcpy(buffer+30+1, &fs->permissions, (sizeof(fs->permissions)));
+    memcpy(buffer+30+1+2, fs->date_created, strlen(fs->date_created));
+    memcpy(buffer+30+1+2+30, fs->date_modified, strlen(fs->date_modified));
+    memcpy(buffer+30+1+2+30+30, &fs->size, (sizeof(fs->size)));
+    memcpy(buffer+30+1+2+30+30+(sizeof(uint64_t) * 1), &fs->size, (sizeof(fs->size) ));
+
+    return buffer;
+}
+
+struct Dir_Entry *deserialize_de(char *buffer) {
+    struct Dir_Entry *result = (struct Dir_Entry*)malloc(sizeof(struct Dir_Entry));
+    memcpy(&result->name, buffer, (sizeof(char) * 30));
+    int file_type = 0;
+    memcpy(&file_type, (buffer+30), 1);
+    result->file_type = file_type;
+
+    int permissions = 0;
+    memcpy(&permissions, buffer+30+1, 2);
+    result->permissions = permissions;
+
+    result->date_created = malloc(30);
+    result->date_modified = malloc(30);
+    memcpy(result->date_created, buffer+30+1+2, (sizeof(char) * 30));
+    memcpy(result->date_modified, buffer+30+1+2+30, (sizeof(char) * 30));
+
+    uint64_t s = 0;
+    memcpy(&s, buffer+30+1+2+30+(sizeof(unsigned long long) * 1), +(sizeof(unsigned long long) * 1) );
+    result->size = s;
+
+    return result;
 }

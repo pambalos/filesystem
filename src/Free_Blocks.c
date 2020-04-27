@@ -16,7 +16,6 @@ struct Free_Blocks* deserialize_fbs(char *buffer) {
     int Num_Free_Blocks;
     memcpy(&Num_Free_Blocks, buffer, sizeof(int));
     int *efbs = (int*)malloc(sizeof(int) * ((Num_Free_Blocks)/32 + 1));
-    //Now we need to set all the bits to 0 for free
     memcpy(efbs, (buffer + sizeof(int)), sizeof(int) * (Num_Free_Blocks/32 + 1));
     struct Free_Blocks* res = (struct Free_Blocks*) malloc(sizeof(struct Free_Blocks*) +sizeof(int) * (Num_Free_Blocks/32 + 1));
     res->Num_Free_Blocks = Num_Free_Blocks;

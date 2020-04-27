@@ -21,7 +21,7 @@ struct Dir_Entry * changeDirectory(struct Dir_Entry *currentDir, char **args, in
 
 void printHomeAdvice();
 
-void remove();
+void rm();
 
 void help();
 

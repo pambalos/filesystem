@@ -5,7 +5,15 @@
 #ifndef FILESYSTEM_FILE_SYSTEM_INFO_H
 #define FILESYSTEM_FILE_SYSTEM_INFO_H
 
-#include "fsLow.h"
+
+#include <stdint.h>
+#include <Dir_Entry.h>
+#include <fsLow.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <Free_Blocks.h>
+#include <BitMap.h>
 
 struct File_System_Info {
     struct Dir_Entry *root;

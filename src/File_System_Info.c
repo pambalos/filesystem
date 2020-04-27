@@ -2,14 +2,6 @@
 // Created by Justice, Bradley on 4/25/20.
 //
 #include <File_System_Info.h>
-#include <stdint.h>
-#include <Dir_Entry.h>
-#include <fsLow.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <Free_Blocks.h>
-#include <BitMap.h>
 
 struct File_System_Info * fsinit(int argc, char *argv[]) {
     //guess that here is where we want to initialize a bunch of stuff
