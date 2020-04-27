@@ -72,13 +72,31 @@ struct File_System_Info *newFsInit(char * filename, uint64_t volumeSize, uint64_
     for (int i = 0; i < (Free_Blocks2->Num_Free_Blocks)/32 + 1; i++) {
         *(Free_Blocks2->fbs+i) = 0;
     }
-    SetBit(Free_Blocks->fbs, 0);
 
-    //save free block structs to fs struct
+    SetBit(Free_Blocks->fbs, 0); //fs info
+    SetBit(Free_Blocks->fbs, 1); //root
+    SetBit(Free_Blocks->fbs, 2); //fbs1
+    SetBit(Free_Blocks->fbs, 3); //fbs2
+
+    SetBit(Free_Blocks2->fbs, 0); //fs info
+    SetBit(Free_Blocks2->fbs, 1); //root
+    SetBit(Free_Blocks2->fbs, 2); //fbs1
+    SetBit(Free_Blocks2->fbs, 3); //fbs2
+
+    //save free block structs to fs struct in memory
     fs->Free_Blocks = Free_Blocks;
     fs->Free_Blocks2 = Free_Blocks2;
+
+    fs->volume_size = volumeSize;
+
     fs->volume_id = 'C';
     strcpy(fs->volume_name, filename);
+
+    //Before we return, we gotta save it all
+    LBAwrite(serialize_fs(fs), 1, 0); //save fs info to LBA 0
+    LBAwrite(serialize_de(fs->root), 1, 1); //save root to LBA 1
+    LBAwrite(serialize_fbs(fs->Free_Blocks), 1, 2); //save freeblocks1 to LBA 2
+    LBAwrite(serialize_fbs(fs->Free_Blocks2), 1, 3); //save freeblocks2 to LBA 3
 
     return fs;
 }
@@ -91,6 +109,7 @@ int tryOpen() {
         return -1;
     } else {
         printf("FOUND SOMETHING!\n");
+
         return 1;
     }
 }
@@ -101,5 +120,38 @@ struct File_System_Info *readExistingFs() {
 }
 
 char* serialize_fs(const struct File_System_Info *fs) {
+    char * buffer = malloc(
+            sizeof(long) + //volume_size
+            sizeof(char)*30 + //volume_name
+            sizeof(char) + //volume_id
+            sizeof(int)//blockSize;
+            );
 
+    memcpy(buffer, &fs->volume_size, sizeof(long));
+    memcpy(buffer + sizeof(long), &fs->volume_name, strlen(fs->volume_name));
+    memcpy(buffer + sizeof(long) + sizeof(char)*30, &fs->volume_id, sizeof(char));
+    memcpy(buffer + sizeof(long) + sizeof(char)*31, &fs->blockSize, sizeof(int));
+
+    return buffer;
+}
+
+struct File_System_Info *deserialize_fs(char *buffer) {
+    struct File_System_Info *result = malloc(sizeof(struct File_System_Info));
+
+    unsigned long vs = 0;
+    memcpy(&vs, buffer, sizeof(long));
+    result->volume_size = vs;
+
+    memset(&result->volume_name, 0, sizeof(char)*30);
+    memcpy(&result->volume_name, buffer + sizeof(long), sizeof(char)*30);
+
+    char c = ' ';
+    memcpy(&c, buffer + sizeof(long) + sizeof(char)*30, sizeof(char)*1);
+    result->volume_id = c;
+
+    int bs = 0;
+    memcpy(&bs, buffer + sizeof(long) + sizeof(char)*31, sizeof(int));
+    result->blockSize = bs;
+
+    return result;
 }

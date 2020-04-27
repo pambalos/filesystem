@@ -15,7 +15,7 @@ struct Dir_Entry *rootinit() {
 
     strcpy(root->name, "home\n");
     root->file_type = 6; //6 for dir
-    root->location = 1;
+    root->contentsLocation = 1;
     root->permissions = 644;
     time_t t;   // not a primitive datatype
     time(&t);
@@ -24,7 +24,7 @@ struct Dir_Entry *rootinit() {
     strcpy(root->date_created, ctime(&t));
     strcpy(root->date_modified, root->date_created);
     printf("\nThis program has been written at (date and time): %s", ctime(&t));
-    root->size = 0;
+    root->size = 1;
     root->numFiles = 2;
     root->fileLBAaddresses = malloc(sizeof(long)*2);
     *root->fileLBAaddresses = 2;
@@ -57,7 +57,7 @@ char* serialize_de(const struct Dir_Entry *fs) {
     memcpy(buffer+30+1+2, fs->date_created, strlen(fs->date_created));
     memcpy(buffer+30+1+2+30, fs->date_modified, strlen(fs->date_modified));
     memcpy(buffer+30+1+2+30+30, &fs->size, (sizeof(long)));
-    memcpy(buffer+30+1+2+30+30+(sizeof(long)), &fs->location, (sizeof(long)));
+    memcpy(buffer+30+1+2+30+30+(sizeof(long)), &fs->contentsLocation, (sizeof(long)));
     memcpy(buffer+30+1+2+30+30+(sizeof(long)*2), &fs->numFiles, (sizeof(int)));
     memcpy(buffer+30+1+2+30+30+(sizeof(long)*2 + sizeof(int)), fs->fileLBAaddresses, (sizeof(long)*(fs->numFiles)));
 
@@ -67,6 +67,7 @@ char* serialize_de(const struct Dir_Entry *fs) {
 struct Dir_Entry *deserialize_de(char *buffer) {
     struct Dir_Entry *result = (struct Dir_Entry*)malloc(sizeof(struct Dir_Entry));
     memcpy(&result->name, buffer, (sizeof(char) * 30));
+
     int file_type = 0;
     memcpy(&file_type, (buffer+30), 1);
     result->file_type = file_type;
@@ -86,7 +87,7 @@ struct Dir_Entry *deserialize_de(char *buffer) {
 
     unsigned long location = 0;
     memcpy(&location, buffer+30+1+2+30+30+sizeof(long), sizeof(long));
-    result->location = location;
+    result->contentsLocation = location;
 
     int numFiles = 0;
     memcpy(&numFiles, buffer+30+1+2+30+30+sizeof(long)*2, sizeof(int));

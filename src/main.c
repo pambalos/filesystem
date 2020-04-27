@@ -71,6 +71,10 @@ void startFileSystem(struct File_System_Info *fs) {
 int main(int argc, char *argv[]) {
 
     struct File_System_Info *fs = fsinit(argc, argv);
+
+    char * srlfs = serialize_fs(fs);
+    struct File_System_Info *testfs = deserialize_fs(srlfs);
+
     startFileSystem(fs);
 
     closePartitionSystem();
