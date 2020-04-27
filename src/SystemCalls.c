@@ -24,7 +24,7 @@ struct Dir_Entry * parseInputIntoCommands(struct Dir_Entry *currentDir, char **a
 }
 
 void listDirs(struct Dir_Entry *currentDir, char **args, int n) {
-
+    printf("will print directorues\n");
 }
 
 struct Dir_Entry * changeDirectory(struct Dir_Entry *currentDir, char **args, int n) {

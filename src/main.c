@@ -63,7 +63,7 @@ void startFileSystem(struct File_System_Info *fs) {
             break;
         } else {
             //Pass input to a separate function...
-            currentDir = parseInputIntoCommands(currentDir, nSpaces, fs);
+            currentDir = parseInputIntoCommands(currentDir, inputs, nSpaces);
         }
     }
 }
