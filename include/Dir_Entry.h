@@ -16,10 +16,10 @@ struct Dir_Entry {
     int permissions;
     char* date_created;
     char* date_modified;
-    uint64_t size;
-    uint64_t location;
+    unsigned long size;
+    unsigned long location;
     int numFiles;
-    uint64_t *fileLBAaddresses;
+    unsigned long *fileLBAaddresses;
 };
 
 struct Dir_Entry *rootinit();

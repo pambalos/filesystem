@@ -25,8 +25,10 @@ struct Dir_Entry *rootinit() {
     strcpy(root->date_modified, root->date_created);
     printf("\nThis program has been written at (date and time): %s", ctime(&t));
     root->size = 0;
-    root->numFiles = 0;
-    root->fileLBAaddresses = NULL;
+    root->numFiles = 2;
+    root->fileLBAaddresses = malloc(sizeof(long)*2);
+    *root->fileLBAaddresses = 2;
+    *(root->fileLBAaddresses+1) = 3;
 
     char * srlzde = serialize_de(root);
     struct Dir_Entry *testDe = deserialize_de(srlzde);
@@ -54,8 +56,10 @@ char* serialize_de(const struct Dir_Entry *fs) {
     memcpy(buffer+30+1, &fs->permissions, (sizeof(fs->permissions)));
     memcpy(buffer+30+1+2, fs->date_created, strlen(fs->date_created));
     memcpy(buffer+30+1+2+30, fs->date_modified, strlen(fs->date_modified));
-    memcpy(buffer+30+1+2+30+30, &fs->size, (sizeof(fs->size)));
-    memcpy(buffer+30+1+2+30+30+(sizeof(uint64_t) * 1), &fs->size, (sizeof(fs->size) ));
+    memcpy(buffer+30+1+2+30+30, &fs->size, (sizeof(long)));
+    memcpy(buffer+30+1+2+30+30+(sizeof(long)), &fs->location, (sizeof(long)));
+    memcpy(buffer+30+1+2+30+30+(sizeof(long)*2), &fs->numFiles, (sizeof(int)));
+    memcpy(buffer+30+1+2+30+30+(sizeof(long)*2 + sizeof(int)), fs->fileLBAaddresses, (sizeof(long)*(fs->numFiles)));
 
     return buffer;
 }
@@ -76,9 +80,24 @@ struct Dir_Entry *deserialize_de(char *buffer) {
     memcpy(result->date_created, buffer+30+1+2, (sizeof(char) * 30));
     memcpy(result->date_modified, buffer+30+1+2+30, (sizeof(char) * 30));
 
-    uint64_t s = 0;
-    memcpy(&s, buffer+30+1+2+30+(sizeof(unsigned long long) * 1), +(sizeof(unsigned long long) * 1) );
-    result->size = s;
+    unsigned long size = 0;
+    memcpy(&size, buffer+30+1+2+30+30, sizeof(long));
+    result->size = size;
+
+    unsigned long location = 0;
+    memcpy(&location, buffer+30+1+2+30+30+sizeof(long), sizeof(long));
+    result->location = location;
+
+    int numFiles = 0;
+    memcpy(&numFiles, buffer+30+1+2+30+30+sizeof(long)*2, sizeof(int));
+    result->numFiles = numFiles;
+
+    unsigned long *fileLBAaddresses = malloc(sizeof(long) * numFiles);
+    for (int i = 0; i < numFiles; i++) {
+        *(fileLBAaddresses+i) = 0;
+    }
+    memcpy(fileLBAaddresses, buffer+30+1+2+30+30+(sizeof(long)*2)+sizeof(int), sizeof(long)*numFiles);
+    result->fileLBAaddresses = fileLBAaddresses;
 
     return result;
 }
