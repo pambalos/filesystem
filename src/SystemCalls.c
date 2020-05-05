@@ -19,6 +19,8 @@ struct Dir_Entry * parseInputIntoCommands(struct Dir_Entry *currentDir, char **a
 
     } else if (strcmp(command, "touch") == 0) {
 
+    } else if (strcmp(command, "scp") == 0) {
+
     }
     return workingDir;
 }

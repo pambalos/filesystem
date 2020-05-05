@@ -97,11 +97,20 @@ struct File_System_Info *newFsInit(char * filename, uint64_t volumeSize, uint64_
     LBAwrite(serialize_de(fs->root), 1, 1); //save root to LBA 1
     LBAwrite(serialize_fbs(fs->Free_Blocks), 1, 2); //save freeblocks1 to LBA 2
     LBAwrite(serialize_fbs(fs->Free_Blocks2), 1, 3); //save freeblocks2 to LBA 3
-
     return fs;
 }
 
+save(myfile) {
+    //1. calculate size of file
+    // turn the file into a buffer
+    //write the file to free LBA points - this
+}
+
+/**
+ * THIS FUNCTION IS CURRENTLY BROKEN - only ever returns found somthing, even when nothing there
+ */
 int tryOpen() {
+    /*
     char *buffer2 = malloc(1000);
     LBAread(buffer2, 1, -1);
     if (strcmp(buffer2, "") == 0) {
@@ -111,6 +120,8 @@ int tryOpen() {
         printf("FOUND SOMETHING!\n"); //return 1 which will trigger read
         return 1;
     }
+     */
+    return 1;
 }
 
 struct File_System_Info *readExistingFs() {

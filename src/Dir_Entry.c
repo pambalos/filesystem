@@ -30,9 +30,6 @@ struct Dir_Entry *rootinit() {
     *root->fileLBAaddresses = 2;
     *(root->fileLBAaddresses+1) = 3;
 
-    char * srlzde = serialize_de(root);
-    struct Dir_Entry *testDe = deserialize_de(srlzde);
-
     return root;
     //Set up bin/ for commands maybe...
 }

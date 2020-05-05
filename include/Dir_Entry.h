@@ -19,7 +19,7 @@ struct Dir_Entry {
     unsigned long size; //this size will actually just be num Blocks
     unsigned long contentsLocation; //LBA address contents start at
     int numFiles;
-    unsigned long *fileLBAaddresses;
+    unsigned long *fileLBAaddresses; // 7, 2, 11, 203, 103
 };
 
 struct Dir_Entry *rootinit();
