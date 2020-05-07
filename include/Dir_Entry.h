@@ -11,6 +11,8 @@ enum FileType {
 };
 
 struct Dir_Entry {
+    long selfAddress;
+    long parentAddress;
     char name[30];
     int file_type;
     int permissions;

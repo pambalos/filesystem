@@ -14,6 +14,7 @@ struct Dir_Entry *rootinit() {
     struct Dir_Entry *root = (struct Dir_Entry*)malloc(sizeof(struct Dir_Entry));
 
     strcpy(root->name, "home\n");
+    root->selfAddress = 1; //root is saved at 1
     root->file_type = 6; //6 for dir
     root->contentsLocation = 1;
     root->permissions = 644;
@@ -25,10 +26,12 @@ struct Dir_Entry *rootinit() {
     strcpy(root->date_modified, root->date_created);
     printf("\nThis program has been written at (date and time): %s", ctime(&t));
     root->size = 1;
-    root->numFiles = 2;
+    root->numFiles = 0;
+    /*
     root->fileLBAaddresses = malloc(sizeof(long)*2);
     *root->fileLBAaddresses = 2;
     *(root->fileLBAaddresses+1) = 3;
+     */
 
     return root;
     //Set up bin/ for commands maybe...

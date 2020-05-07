@@ -110,9 +110,9 @@ save(myfile) {
  * THIS FUNCTION IS CURRENTLY BROKEN - only ever returns found somthing, even when nothing there
  */
 int tryOpen() {
-    /*
+
     char *buffer2 = malloc(1000);
-    LBAread(buffer2, 1, -1);
+    LBAread(buffer2, 1, 1);
     if (strcmp(buffer2, "") == 0) {
         printf("There is nothing here! - must initialize\n");
         return -1;
@@ -120,7 +120,7 @@ int tryOpen() {
         printf("FOUND SOMETHING!\n"); //return 1 which will trigger read
         return 1;
     }
-     */
+
     return 1;
 }
 
