@@ -100,12 +100,6 @@ struct File_System_Info *newFsInit(char * filename, uint64_t volumeSize, uint64_
     return fs;
 }
 
-save(myfile) {
-    //1. calculate size of file
-    // turn the file into a buffer
-    //write the file to free LBA points - this
-}
-
 /**
  * THIS FUNCTION IS CURRENTLY BROKEN - only ever returns found somthing, even when nothing there
  */

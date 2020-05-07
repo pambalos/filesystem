@@ -18,7 +18,7 @@ struct Dir_Entry {
     int permissions;
     char* date_created;
     char* date_modified;
-    unsigned long size; //this size will actually just be num Blocks
+    unsigned long sizeInBlocks; //this size will actually just be num Blocks
     unsigned long contentsLocation; //LBA address contents start at
     int numFiles;
     unsigned long *fileLBAaddresses; // 7, 2, 11, 203, 103

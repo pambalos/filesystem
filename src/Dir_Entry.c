@@ -15,6 +15,7 @@ struct Dir_Entry *rootinit() {
 
     strcpy(root->name, "home\n");
     root->selfAddress = 1; //root is saved at 1
+    root->parentAddress = -1; //
     root->file_type = 6; //6 for dir
     root->contentsLocation = 1;
     root->permissions = 644;
@@ -24,8 +25,8 @@ struct Dir_Entry *rootinit() {
     root->date_modified = malloc(sizeof(char) * 30);
     strcpy(root->date_created, ctime(&t));
     strcpy(root->date_modified, root->date_created);
-    printf("\nThis program has been written at (date and time): %s", ctime(&t));
-    root->size = 1;
+    printf("\nRoot folder initialized at (date and time): %s", ctime(&t));
+    root->sizeInBlocks = 1;
     root->numFiles = 0;
     /*
     root->fileLBAaddresses = malloc(sizeof(long)*2);
@@ -38,7 +39,9 @@ struct Dir_Entry *rootinit() {
 }
 
 char* serialize_de(const struct Dir_Entry *fs) {
-    int size = (sizeof(char) * 30) + //name
+    unsigned long size =
+            (sizeof(long) * 2) + //selfAddress and parentAddress
+            (sizeof(char) * 30) + //name
             (sizeof(enum FileType) * 1) + //file_type
             (sizeof(int) * 1) + //permissions
             (sizeof(char) * 30) + //date_created
@@ -50,54 +53,67 @@ char* serialize_de(const struct Dir_Entry *fs) {
 
     char* buffer = (char *) malloc(size);
     memset(buffer, 0, size);
+    unsigned long sizeCounter = 0;
 
-    memcpy(buffer, &fs->name, strlen(fs->name));
-    memcpy(buffer+30, &fs->file_type, sizeof(fs->file_type));
-    memcpy(buffer+30+1, &fs->permissions, (sizeof(fs->permissions)));
-    memcpy(buffer+30+1+2, fs->date_created, strlen(fs->date_created));
-    memcpy(buffer+30+1+2+30, fs->date_modified, strlen(fs->date_modified));
-    memcpy(buffer+30+1+2+30+30, &fs->size, (sizeof(long)));
-    memcpy(buffer+30+1+2+30+30+(sizeof(long)), &fs->contentsLocation, (sizeof(long)));
-    memcpy(buffer+30+1+2+30+30+(sizeof(long)*2), &fs->numFiles, (sizeof(int)));
-    memcpy(buffer+30+1+2+30+30+(sizeof(long)*2 + sizeof(int)), fs->fileLBAaddresses, (sizeof(long)*(fs->numFiles)));
+    memcpy(buffer, &fs->selfAddress, sizeof(long)); sizeCounter += sizeof(long);
+    memcpy(buffer+sizeCounter, &fs->parentAddress, sizeof(long)); sizeCounter += sizeof(long);
+    memcpy(buffer+sizeCounter, fs->name, strlen(fs->name)); sizeCounter += sizeof(char)*30;
+    memcpy(buffer+sizeCounter, &fs->file_type, sizeof(fs->file_type)); sizeCounter += sizeof(int);
+    memcpy(buffer+sizeCounter, &fs->permissions, (sizeof(fs->permissions))); sizeCounter += sizeof(int);
+    memcpy(buffer+sizeCounter, fs->date_created, strlen(fs->date_created)); sizeCounter += sizeof(char)*30;
+    memcpy(buffer+sizeCounter, fs->date_modified, strlen(fs->date_modified)); sizeCounter += sizeof(char)*30;
+    memcpy(buffer+sizeCounter, &fs->sizeInBlocks, (sizeof(long))); sizeCounter += sizeof(long);
+    memcpy(buffer+sizeCounter, &fs->contentsLocation, (sizeof(long))); sizeCounter += sizeof(long);
+    memcpy(buffer+sizeCounter, &fs->numFiles, (sizeof(int))); sizeCounter += sizeof(int);
+    memcpy(buffer+sizeCounter, &fs->fileLBAaddresses, (sizeof(long)*(fs->numFiles)));
 
     return buffer;
 }
 
 struct Dir_Entry *deserialize_de(char *buffer) {
     struct Dir_Entry *result = (struct Dir_Entry*)malloc(sizeof(struct Dir_Entry));
-    memcpy(&result->name, buffer, (sizeof(char) * 30));
+    unsigned long sizeCounter = 0;
+
+    long selfAddress = 0;
+    memcpy(&selfAddress, buffer, sizeof(long)); sizeCounter += sizeof(long);
+    result->selfAddress = selfAddress;
+
+    long parentAddress = 0;
+    memcpy(&parentAddress, buffer+sizeCounter, sizeof(long)); sizeCounter += sizeof(long);
+    result->parentAddress = parentAddress;
+
+    strcpy(&result->name, buffer+sizeCounter); sizeCounter += (sizeof(char) * 30);
 
     int file_type = 0;
-    memcpy(&file_type, (buffer+30), 1);
+    memcpy(&file_type, buffer+sizeCounter, sizeof(int)); sizeCounter += sizeof(int);
     result->file_type = file_type;
 
     int permissions = 0;
-    memcpy(&permissions, buffer+30+1, 2);
+    memcpy(&permissions, buffer+sizeCounter, sizeof(int)); sizeCounter += sizeof(int);
     result->permissions = permissions;
 
-    result->date_created = malloc(30);
-    result->date_modified = malloc(30);
-    memcpy(result->date_created, buffer+30+1+2, (sizeof(char) * 30));
-    memcpy(result->date_modified, buffer+30+1+2+30, (sizeof(char) * 30));
+    result->date_created = malloc(sizeof(char)*30);
+    memcpy(result->date_created, buffer+sizeCounter, (sizeof(char) * 30)); sizeCounter += (sizeof(char) * 30);
+    result->date_modified = malloc(sizeof(char)*30);
+    memcpy(result->date_modified, buffer+sizeCounter, (sizeof(char) * 30)); sizeCounter += (sizeof(char) * 30);
 
     unsigned long size = 0;
-    memcpy(&size, buffer+30+1+2+30+30, sizeof(long));
-    result->size = size;
+    memcpy(&size, buffer+sizeCounter, sizeof(long)); sizeCounter += sizeof(long);
+    result->sizeInBlocks = size;
 
     unsigned long location = 0;
-    memcpy(&location, buffer+30+1+2+30+30+sizeof(long), sizeof(long));
+    memcpy(&location, buffer+sizeCounter, sizeof(long)); sizeCounter += sizeof(long);
     result->contentsLocation = location;
 
     int numFiles = 0;
-    memcpy(&numFiles, buffer+30+1+2+30+30+sizeof(long)*2, sizeof(int));
+    memcpy(&numFiles, buffer+sizeCounter, sizeof(int)); sizeCounter += sizeof(int);
     result->numFiles = numFiles;
 
     unsigned long *fileLBAaddresses = malloc(sizeof(long) * numFiles);
     for (int i = 0; i < numFiles; i++) {
         *(fileLBAaddresses+i) = 0;
     }
-    memcpy(fileLBAaddresses, buffer+30+1+2+30+30+(sizeof(long)*2)+sizeof(int), sizeof(long)*numFiles);
+    memcpy(fileLBAaddresses, buffer+sizeCounter, sizeof(long)*numFiles);
     result->fileLBAaddresses = fileLBAaddresses;
 
     return result;
