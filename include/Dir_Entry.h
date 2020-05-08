@@ -7,7 +7,7 @@
 
 enum FileType {
     //0,   1,  2,   3,   4,   5,   6
-    txt, zip, sh, exe, pdf, bat, dir
+    txt = 0, zip = 1, sh = 2, exe = 3, pdf = 4, bat = 5, dir = 6
 };
 
 struct Dir_Entry {

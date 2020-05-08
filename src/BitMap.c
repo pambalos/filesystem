@@ -27,6 +27,12 @@ void ClearBit(int *fbs, int k) {
     *(fbs+i) = *(fbs+i) & flag;     // RESET the bit at the k-th position in A[i]
 }
 
+/**
+ * Returns true if taken
+ * @param fbs
+ * @param k
+ * @return
+ */
 bool CheckBit(int *fbs, int k) {
     unsigned int i = k/32;
     unsigned int pos = k%32;

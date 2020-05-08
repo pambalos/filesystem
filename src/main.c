@@ -24,6 +24,7 @@ void startFileSystem(struct File_System_Info *fs) {
 
     char inputBuffer[1024];
     while (true) {
+        fflush(stdin);
         printf("$:");
         fgets(inputBuffer, sizeof(inputBuffer), stdin);
         while (strlen(inputBuffer) == 0) {
@@ -63,7 +64,8 @@ void startFileSystem(struct File_System_Info *fs) {
             break;
         } else {
             //Pass input to a separate function...
-            currentDir = parseInputIntoCommands(currentDir, inputs, nSpaces);
+            currentDir = parseInputIntoCommands(fs, currentDir, inputs, nSpaces);
+            fflush(stdin);
         }
     }
 }
