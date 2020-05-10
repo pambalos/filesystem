@@ -219,7 +219,7 @@ void helpFunc(char** args){
         printf("    Exit Status:\n");
         printf("    Return success unless PATTERN is not found or an invalid option is given.\n");
     } else if (strcmp(args[0], 'touch') == 0){
-        printf("help: help [pattern...]\n");
+        printf("touch: help [pattern...]\n");
         printf("    Display information about builtin commands.\n");
         printf("\n");
         printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
@@ -232,7 +232,7 @@ void helpFunc(char** args){
         printf("    Exit Status:\n");
         printf("    Return success unless PATTERN is not found or an invalid option is given.\n")
     } else if (strcmp(args[0], 'scp') == 0){
-        printf("help: help [pattern...]\n");
+        printf("scp: scp [pattern...]\n");
         printf("    Display information about builtin commands.\n");
         printf("\n");
         printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
@@ -245,7 +245,7 @@ void helpFunc(char** args){
         printf("    Exit Status:\n");
         printf("    Return success unless PATTERN is not found or an invalid option is given.\n")
     } else if (strcmp(args[0], 'mkdir') == 0){
-printf("help: help [pattern...]\n");
+printf("mkdir: mkdir [pattern...]\n");
         printf("    Display information about builtin commands.\n");
         printf("\n");
         printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
