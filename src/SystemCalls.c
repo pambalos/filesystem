@@ -258,7 +258,17 @@ void listDirs(struct Dir_Entry *currentDir, char **args, int n) {
 }
 
 struct Dir_Entry * changeDirectory(struct Dir_Entry *currentDir, char **args, int n) {
-
+    char *dirName = args[0];
+    for (int i = 0; i < currentDir->numFiles; i++) {
+        char *buffer = malloc(MINBLOCKSIZE);
+        LBAread(buffer, 1, currentDir->fileLBAaddresses[i]);
+        struct Dir_Entry *entry = deserialize_de(buffer);
+        if (strcmp(dirName, entry->name) == 0) {
+            if (entry->file_type == 6) {
+                return entry;
+            }
+        }
+    }
 }
 
 void helpFunc(char** args) {
