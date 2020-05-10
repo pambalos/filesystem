@@ -25,6 +25,6 @@ void printHomeAdvice();
 
 void rm();
 
-void help();
+void helpFunc(char** args);
 
 #endif //FILESYSTEM_SYSTEMCALLS_H

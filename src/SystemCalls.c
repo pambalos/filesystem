@@ -152,8 +152,8 @@ struct Dir_Entry * changeDirectory(struct Dir_Entry *currentDir, char **args, in
 
 }
 
-void helpFunc(char** args){
-    if (strcmp(args[0], 'ls') == 0){
+void helpFunc(char** args) {
+    if (strcmp(args[0], "ls") == 0){
         printf("ls: ls [-a]\n");
         printf("    Lists the current directory.\n");
         printf("\n");
@@ -164,13 +164,13 @@ void helpFunc(char** args){
         printf("     -a:  Displays the current directory detailed.\n");
         printf("\n");
         printf("    Exit Status:\n");
-        printf("    Return success always.\n")
-    } else if (strcmp(args[0], 'cd') == 0){
+        printf("    Return success always.\n");
+    } else if (strcmp(args[0], "cd") == 0){
         printf("cd: help [pattern.extension]\n");
         printf("    Changes the current direcotry to the directory specified by pattern.extension.\n");
         printf("\n");
         printf("    Changes the current working directory to the specified directory represented by\n");
-        printf("    pattern.extension. Supports various extensions.")
+        printf("    pattern.extension. Supports various extensions.");
         printf("\n");
         printf("    Extensions:\n");
         printf("     txt\n");
@@ -182,34 +182,8 @@ void helpFunc(char** args){
         printf("     dir\n");
         printf("\n");
         printf("    Exit Status:\n");
-        printf("    Return success unless PATTERN is not found or an invalid extension option is given.\n")
-    } else if (strcmp(args[0], '~') == 0){
-        printf("help: help [pattern...]\n");
-        printf("    Display information about builtin commands.\n");
-        printf("\n");
-        printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
-        printf("    specified, gives detailed hlep on all commands matching PATTERN,\n");
-        printf("    otherwise the list of help topics is printed.\n");
-        printf("\n");
-        printf("    Arguments:\n");
-        printf("     PATTERN:  Pattern specifying a help topic\n");
-        printf("\n");
-        printf("    Exit Status:\n");
-        printf("    Return success unless PATTERN is not found or an invalid option is given.\n")
-    } else if (strcmp(args[0], 'rm') == 0){
-        printf("help: help [pattern...]\n");
-        printf("    Display information about builtin commands.\n");
-        printf("\n");
-        printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
-        printf("    specified, gives detailed hlep on all commands matching PATTERN,\n");
-        printf("    otherwise the list of help topics is printed.\n");
-        printf("\n");
-        printf("    Arguments:\n");
-        printf("     PATTERN:  Pattern specifying a help topic\n");
-        printf("\n");
-        printf("    Exit Status:\n");
-        printf("    Return success unless PATTERN is not found or an invalid option is given.\n")
-    } else if (strcmp(args[0], 'help') == 0){
+        printf("    Return success unless PATTERN is not found or an invalid extension option is given.\n");
+    } else if (strcmp(args[0], "~") == 0){
         printf("help: help [pattern...]\n");
         printf("    Display information about builtin commands.\n");
         printf("\n");
@@ -222,7 +196,33 @@ void helpFunc(char** args){
         printf("\n");
         printf("    Exit Status:\n");
         printf("    Return success unless PATTERN is not found or an invalid option is given.\n");
-    } else if (strcmp(args[0], 'touch') == 0){
+    } else if (strcmp(args[0], "rm") == 0){
+        printf("help: help [pattern...]\n");
+        printf("    Display information about builtin commands.\n");
+        printf("\n");
+        printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
+        printf("    specified, gives detailed hlep on all commands matching PATTERN,\n");
+        printf("    otherwise the list of help topics is printed.\n");
+        printf("\n");
+        printf("    Arguments:\n");
+        printf("     PATTERN:  Pattern specifying a help topic\n");
+        printf("\n");
+        printf("    Exit Status:\n");
+        printf("    Return success unless PATTERN is not found or an invalid option is given.\n");
+    } else if (strcmp(args[0], "help") == 0){
+        printf("help: help [pattern...]\n");
+        printf("    Display information about builtin commands.\n");
+        printf("\n");
+        printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
+        printf("    specified, gives detailed hlep on all commands matching PATTERN,\n");
+        printf("    otherwise the list of help topics is printed.\n");
+        printf("\n");
+        printf("    Arguments:\n");
+        printf("     PATTERN:  Pattern specifying a help topic\n");
+        printf("\n");
+        printf("    Exit Status:\n");
+        printf("    Return success unless PATTERN is not found or an invalid option is given.\n");
+    } else if (strcmp(args[0], "touch") == 0){
         printf("touch: help [pattern...]\n");
         printf("    Display information about builtin commands.\n");
         printf("\n");
@@ -234,8 +234,8 @@ void helpFunc(char** args){
         printf("     PATTERN:  Pattern specifying a help topic\n");
         printf("\n");
         printf("    Exit Status:\n");
-        printf("    Return success unless PATTERN is not found or an invalid option is given.\n")
-    } else if (strcmp(args[0], 'scp') == 0){
+        printf("    Return success unless PATTERN is not found or an invalid option is given.\n");
+    } else if (strcmp(args[0], "scp") == 0){
         printf("scp: scp [pattern...]\n");
         printf("    Display information about builtin commands.\n");
         printf("\n");
@@ -247,8 +247,8 @@ void helpFunc(char** args){
         printf("     PATTERN:  Pattern specifying a help topic\n");
         printf("\n");
         printf("    Exit Status:\n");
-        printf("    Return success unless PATTERN is not found or an invalid option is given.\n")
-    } else if (strcmp(args[0], 'mkdir') == 0){
+        printf("    Return success unless PATTERN is not found or an invalid option is given.\n");
+    } else if (strcmp(args[0], "mkdir") == 0){
 printf("mkdir: mkdir [pattern...]\n");
         printf("    Display information about builtin commands.\n");
         printf("\n");
@@ -260,7 +260,7 @@ printf("mkdir: mkdir [pattern...]\n");
         printf("     PATTERN:  Pattern specifying a help topic\n");
         printf("\n");
         printf("    Exit Status:\n");
-        printf("    Return success unless PATTERN is not found or an invalid option is given.\n")
+        printf("    Return success unless PATTERN is not found or an invalid option is given.\n");
     } else {
         printf("The 'help' command must be followed by a command to request help about.\n");
         printf("List of possible commands: 'ls', 'cd', '~', 'rm', 'help', 'touch', 'scp', 'mkdir'\n");
