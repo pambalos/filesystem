@@ -42,7 +42,7 @@ struct Dir_Entry *removeDir(struct File_System_Info *fs, struct Dir_Entry *curre
         LBAread(buffer, 1, currentDir->fileLBAaddresses[i]);
         file = deserialize_de(buffer);
         if (strcmp(file->name, fileName) == 0) {
-            toRemove = file->selfAddress;
+            unsigned long toRemove = file->selfAddress;
             //remove the file address from address list
             unsigned long *addresses = malloc(sizeof(unsigned long)*(file->numFiles-1));
             int c = 0;
