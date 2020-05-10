@@ -110,7 +110,14 @@ void createFile(struct File_System_Info *fs, struct Dir_Entry *current_directory
         current_directory->numFiles = 1;
     } else {
         unsigned long *tmp = malloc(sizeof(long)*(current_directory->numFiles+1));
+        for (int i = 0; i < current_directory->numFiles; i++) {
+            unsigned long myL =0l;
+            memcpy(&myL, (current_directory->fileLBAaddresses+i), sizeof(long));
+            memcpy((tmp+i), (current_directory->fileLBAaddresses+i), sizeof(long));
+        }
+
         memcpy(tmp, current_directory->fileLBAaddresses, sizeof(long)*current_directory->numFiles);
+
         tmp[current_directory->numFiles] = newFile->selfAddress;
         current_directory->numFiles++;
         current_directory->fileLBAaddresses = tmp;
@@ -120,6 +127,7 @@ void createFile(struct File_System_Info *fs, struct Dir_Entry *current_directory
     char *x = malloc(512);
     LBAwrite(serialize_de(newFile), newFile->sizeInBlocks, lbaLocation);
     LBAwrite(serialize_de(current_directory), current_directory->sizeInBlocks, current_directory->selfAddress);
+    SetBit(fs->Free_Blocks->fbs, lbaLocation);
     LBAread(x, 1, current_directory->selfAddress);
     struct Dir_Entry *test = deserialize_de(x);
     bool aaa = false;

@@ -41,7 +41,7 @@ struct File_System_Info * fsinit(int argc, char *argv[]) {
 }
 
 struct File_System_Info *newFsInit(char * filename, uint64_t volumeSize, uint64_t blockSize) {
-    struct File_System_Info *fs = (struct File_System_Info *)malloc(sizeof(struct File_System_Info *));
+    struct File_System_Info *fs = (struct File_System_Info *)malloc(512);
 
     //initialize root directory, set root metadata
     struct Dir_Entry *root = rootinit();
