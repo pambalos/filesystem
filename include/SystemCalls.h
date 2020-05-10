@@ -15,6 +15,8 @@
  */
 struct Dir_Entry * parseInputIntoCommands(struct File_System_Info *fs, struct Dir_Entry *currentDir, char **args, int n);
 
+void createDirectory(struct File_System_Info *fs, struct Dir_Entry *current_directory, char **args, int n);
+
 void createFile(struct File_System_Info *fs, struct Dir_Entry *current_directory, char **args, int n);
 
 void listDirs(struct Dir_Entry *currentDir, char **args, int n);

@@ -66,8 +66,10 @@ char* serialize_de(const struct Dir_Entry *fs) {
     memcpy(buffer+sizeCounter, &fs->sizeInBlocks, (sizeof(long))); sizeCounter += sizeof(long);
     memcpy(buffer+sizeCounter, &fs->contentsLocation, (sizeof(long))); sizeCounter += sizeof(long);
     memcpy(buffer+sizeCounter, &fs->numFiles, (sizeof(int))); sizeCounter += sizeof(int);
-    memcpy(buffer+sizeCounter, &fs->fileLBAaddresses, (sizeof(long)*(fs->numFiles)));
-
+    memcpy(buffer+sizeCounter, &fs->fileLBAaddresses, (sizeof(unsigned long)*(fs->numFiles)));
+    for (int i = 0; i < fs->numFiles; i++) {
+        memcpy(buffer+sizeCounter+sizeof(unsigned long)*i, &fs->fileLBAaddresses+sizeof(unsigned long)*i, (sizeof(unsigned long)));
+    }
     return buffer;
 }
 
@@ -111,14 +113,16 @@ struct Dir_Entry *deserialize_de(char *buffer) {
     memcpy(&numFiles, buffer+sizeCounter, sizeof(int)); sizeCounter += sizeof(int);
     result->numFiles = numFiles;
 
-    unsigned long *fileLBAaddresses = malloc(sizeof(long) * numFiles);
-    /*
+    unsigned long *fileLBAaddresses = malloc(sizeof(unsigned long) * numFiles);
+
     for (int i = 0; i < numFiles; i++) {
+        unsigned long myL = 0l;
+        memcpy(&myL, (buffer+sizeCounter+sizeof(unsigned long)*i), sizeof(unsigned long));
         *(fileLBAaddresses+i) = 0;
-        memcpy((fileLBAaddresses+i), buffer+sizeCounter+(sizeof(long)*i), sizeof(long)); sizeCounter += sizeof(long);
+        //memcpy((fileLBAaddresses+i), buffer+sizeCounter+(sizeof(long)*i), sizeof(long));
     }
-     */
-    memcpy(fileLBAaddresses, buffer+sizeCounter, sizeof(long)*numFiles);
+
+    //memcpy(fileLBAaddresses, buffer+sizeCounter, sizeof(long)*numFiles);
     result->fileLBAaddresses = fileLBAaddresses;
 
     return result;

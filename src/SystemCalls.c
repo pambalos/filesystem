@@ -31,9 +31,74 @@ struct Dir_Entry * parseInputIntoCommands(struct File_System_Info *fs, struct Di
         //adam
 
     } else if (strcmp(command, "mkdir") == 0) {
-
+        createDirectory(fs, currentDir, &args[1], n-1);
     }
     return workingDir;
+}
+
+/**
+ * Copy & Pasted from Steven's branch to avoid merge issues
+ * @param fs
+ * @param current_directory
+ * @param args
+ * @param n
+ */
+void createDirectory(struct File_System_Info *fs, struct Dir_Entry *current_directory, char **args, int n) {
+    struct Dir_Entry *newDirectory = (struct Dir_Entry*)malloc(sizeof(struct Dir_Entry));
+
+    int lbaLocation = findSpace(fs, fs->blockSize);
+    newDirectory->selfAddress = lbaLocation;
+
+    newDirectory->parentAddress = current_directory->selfAddress;
+
+    //get the name of the file...
+    char *buffer = strtok(args[0], "\n");
+    strcpy(newDirectory->name, buffer);
+
+
+    newDirectory->file_type = 6;
+
+    int myInt;
+    printf("Enter a permissions level (ie. 644): ");
+    int result = scanf("%d", &myInt);
+    while (result == EOF) {
+        /* ... you're not going to get any input ... */
+        printf("try again...\n");
+        printf("Enter a permissions level (ie. 644): ");
+        result = scanf("%d", &myInt);
+    }
+    newDirectory->permissions = result;
+
+    time_t t;   // not a primitive datatype
+    time(&t);
+    newDirectory->date_created = malloc(sizeof(char) * 30);
+    newDirectory->date_modified = malloc(sizeof(char) * 30);
+    strcpy(newDirectory->date_created, ctime(&t));
+    strcpy(newDirectory->date_modified, newDirectory->date_created);
+    printf("\ndirectory initialized at (date and time): %s", ctime(&t));
+
+    unsigned long sizeInBlocks = 1; //this size will actually just be num Blocks
+    newDirectory->sizeInBlocks = sizeInBlocks;
+
+    newDirectory->contentsLocation = 0;
+
+    newDirectory->numFiles = 0;
+
+    if (current_directory->numFiles == 0) {
+        current_directory->fileLBAaddresses = malloc(sizeof(long));
+        current_directory->fileLBAaddresses[0] = newDirectory->selfAddress;
+        current_directory->numFiles = 1;
+    } else {
+        unsigned long *tmp = malloc(sizeof(long)*(current_directory->numFiles+1));
+        memcpy(tmp, current_directory->fileLBAaddresses, sizeof(long)*current_directory->numFiles);
+        tmp[current_directory->numFiles] = newDirectory->selfAddress;
+        current_directory->numFiles++;
+        current_directory->fileLBAaddresses = tmp;
+    }
+    int c; while ((c = getchar()) != EOF && c != '\n') ;
+
+    LBAwrite(serialize_de(newDirectory), newDirectory->sizeInBlocks, lbaLocation);
+    LBAwrite(serialize_de(current_directory), current_directory->sizeInBlocks, current_directory->selfAddress);
 }
 
 void createFile(struct File_System_Info *fs, struct Dir_Entry *current_directory, char **args, int n) {
@@ -110,7 +175,14 @@ void createFile(struct File_System_Info *fs, struct Dir_Entry *current_directory
         current_directory->numFiles = 1;
     } else {
         unsigned long *tmp = malloc(sizeof(long)*(current_directory->numFiles+1));
+        for (int i = 0; i < current_directory->numFiles; i++) {
+            unsigned long myL =0l;
+            memcpy(&myL, (current_directory->fileLBAaddresses+i), sizeof(long));
+            memcpy((tmp+i), (current_directory->fileLBAaddresses+i), sizeof(long));
+        }
+
         memcpy(tmp, current_directory->fileLBAaddresses, sizeof(long)*current_directory->numFiles);
+
         tmp[current_directory->numFiles] = newFile->selfAddress;
         current_directory->numFiles++;
         current_directory->fileLBAaddresses = tmp;
@@ -120,6 +192,7 @@ void createFile(struct File_System_Info *fs, struct Dir_Entry *current_directory
     char *x = malloc(512);
     LBAwrite(serialize_de(newFile), newFile->sizeInBlocks, lbaLocation);
     LBAwrite(serialize_de(current_directory), current_directory->sizeInBlocks, current_directory->selfAddress);
+    SetBit(fs->Free_Blocks->fbs, lbaLocation);
     LBAread(x, 1, current_directory->selfAddress);
     struct Dir_Entry *test = deserialize_de(x);
     bool aaa = false;
