@@ -251,7 +251,12 @@ void listDirs(struct Dir_Entry *currentDir, char **args, int n) {
         if (detailed) {
             printf("%s\t%lu\n", file->name, file->sizeInBlocks);
         } else {
-            printf("%s\n", file->name);
+            if (file->file_type == 6) {
+                printf("%s/\n", file->name);
+            } else {
+                printf("%s\n", file->name);
+            }
+
         }
     }
     printf("\n");
