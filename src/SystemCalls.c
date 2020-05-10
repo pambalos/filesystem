@@ -6,6 +6,8 @@
 #include <ntsid.h>
 #include <time.h>
 
+void testSerialization(struct File_System_Info *fs, struct Dir_Entry *currentDir, char **args);
+
 struct Dir_Entry * parseInputIntoCommands(struct File_System_Info *fs, struct Dir_Entry *currentDir, char **args, int n) {
     char *command = args[0];
     struct Dir_Entry *workingDir = currentDir;
@@ -30,8 +32,19 @@ struct Dir_Entry * parseInputIntoCommands(struct File_System_Info *fs, struct Di
 
     } else if (strcmp(command, "mkdir") == 0) {
         createDirectory(fs, currentDir, &args[1], n-1);
+    } else if (strcmp(command, "test") == 0) {
+        testSerialization(fs, currentDir, &args[1]);
     }
     return workingDir;
+}
+
+void testSerialization(struct File_System_Info *fs, struct Dir_Entry *currentDir, char **args) {
+    char *buffer = malloc(MINBLOCKSIZE);
+    LBAwrite(serialize_de(currentDir), 1, 6);
+    LBAread(buffer, 1, 6);
+    struct Dir_Entry *tdir = deserialize_de(buffer);
+
+    bool t;
 }
 
 struct Dir_Entry *removeDir(struct File_System_Info *fs, struct Dir_Entry *currentDir, char **args, int n) {
@@ -263,13 +276,24 @@ void listDirs(struct Dir_Entry *currentDir, char **args, int n) {
 }
 
 struct Dir_Entry * changeDirectory(struct Dir_Entry *currentDir, char **args, int n) {
+    LBAwrite(serialize_de(currentDir), 1, currentDir->selfAddress);
     char *dirName = args[0];
+    if (strcmp(dirName, "..") == 0) {
+        if (currentDir->parentAddress != -1) {
+            char *buffer = malloc(MINBLOCKSIZE);
+            LBAread(buffer, 1, currentDir->parentAddress);
+            struct Dir_Entry *entry = deserialize_de(buffer);
+            //free(buffer);
+            return entry;
+        }
+    }
     for (int i = 0; i < currentDir->numFiles; i++) {
         char *buffer = malloc(MINBLOCKSIZE);
         LBAread(buffer, 1, currentDir->fileLBAaddresses[i]);
         struct Dir_Entry *entry = deserialize_de(buffer);
         if (strcmp(dirName, entry->name) == 0) {
             if (entry->file_type == 6) {
+                //free(buffer);
                 return entry;
             }
         }
