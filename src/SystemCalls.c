@@ -86,7 +86,7 @@ void createFile(struct File_System_Info *fs, struct Dir_Entry *current_directory
         result = scanf("%d", &myInt);
 
     }
-    newFile->permissions = result;
+    newFile->permissions = myInt;
 
     time_t t;   // not a primitive datatype
     time(&t);
@@ -116,8 +116,12 @@ void createFile(struct File_System_Info *fs, struct Dir_Entry *current_directory
     }
     int c; while ((c = getchar()) != EOF && c != '\n') ;
 
+    char *x = malloc(512);
     LBAwrite(serialize_de(newFile), newFile->sizeInBlocks, lbaLocation);
     LBAwrite(serialize_de(current_directory), current_directory->sizeInBlocks, current_directory->selfAddress);
+    LBAread(x, 1, current_directory->selfAddress);
+    struct Dir_Entry *test = deserialize_de(x);
+    bool aaa = false;
 }
 
 void listDirs(struct Dir_Entry *currentDir, char **args, int n) {
