@@ -55,6 +55,13 @@ struct Dir_Entry *removeDir(struct File_System_Info *fs, struct Dir_Entry *curre
                 }
             }
             currentDir->fileLBAaddresses = addresses;
+
+            //now free the bits in the map and blocks
+            char * b = malloc(512);
+            memset(b, 0, 512);
+            LBAwrite(b, 1, file->contentsLocation);
+            LBAwrite(b, 1, file->selfAddress);
+            ClearBit(fs->Free_Blocks->fbs, file->selfAddress);
         }
     }
 
