@@ -55,7 +55,6 @@ void createDirectory(struct File_System_Info *fs, struct Dir_Entry *current_dire
     char *buffer = strtok(args[0], "\n");
     strcpy(newDirectory->name, buffer);
 
-
     newDirectory->file_type = 6;
 
     int myInt;
@@ -175,14 +174,14 @@ void createFile(struct File_System_Info *fs, struct Dir_Entry *current_directory
         current_directory->numFiles = 1;
     } else {
         unsigned long *tmp = malloc(sizeof(long)*(current_directory->numFiles+1));
+        /*
         for (int i = 0; i < current_directory->numFiles; i++) {
             unsigned long myL =0l;
             memcpy(&myL, (current_directory->fileLBAaddresses+i), sizeof(long));
             memcpy((tmp+i), (current_directory->fileLBAaddresses+i), sizeof(long));
-        }
+        } */
 
         memcpy(tmp, current_directory->fileLBAaddresses, sizeof(long)*current_directory->numFiles);
-
         tmp[current_directory->numFiles] = newFile->selfAddress;
         current_directory->numFiles++;
         current_directory->fileLBAaddresses = tmp;
