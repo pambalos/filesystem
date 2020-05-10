@@ -131,6 +131,8 @@ void createDirectory(struct File_System_Info *fs, struct Dir_Entry *current_dire
     }
     int c; while ((c = getchar()) != EOF && c != '\n') ;
 
+    SetBit(fs->Free_Blocks->fbs, newDirectory->selfAddress);
+    SetBit(fs->Free_Blocks2->fbs, newDirectory->selfAddress);
     LBAwrite(serialize_de(newDirectory), newDirectory->sizeInBlocks, lbaLocation);
     LBAwrite(serialize_de(current_directory), current_directory->sizeInBlocks, current_directory->selfAddress);
 }
