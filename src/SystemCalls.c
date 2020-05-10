@@ -44,7 +44,8 @@ struct Dir_Entry *removeDir(struct File_System_Info *fs, struct Dir_Entry *curre
         if (strcmp(file->name, fileName) == 0) {
             unsigned long toRemove = file->selfAddress;
             //remove the file address from address list
-            unsigned long *addresses = malloc(sizeof(unsigned long)*(file->numFiles-1));
+            unsigned long *addresses = malloc(sizeof(unsigned long)*(currentDir->numFiles-1));
+            memset(addresses, 0, currentDir->numFiles-1);
             int c = 0;
             for (int j = 0; j < currentDir->numFiles; j++) {
                 if (*(currentDir->fileLBAaddresses+j) != toRemove) {
@@ -52,8 +53,12 @@ struct Dir_Entry *removeDir(struct File_System_Info *fs, struct Dir_Entry *curre
                     c++;
                 }
             }
-            currentDir->fileLBAaddresses = addresses;
-
+            currentDir->numFiles--;
+            if (currentDir->numFiles > 1) {
+                currentDir->fileLBAaddresses = NULL;
+            } else {
+                currentDir->fileLBAaddresses = addresses;
+            }
             //now free the bits in the map and blocks
             char * b = malloc(512);
             memset(b, 0, 512);
