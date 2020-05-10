@@ -18,7 +18,6 @@ struct Dir_Entry * parseInputIntoCommands(struct File_System_Info *fs, struct Di
         //current = root
         workingDir = fs->root;
     } else if (strcmp(command, "rm") == 0) {
-        //Grayson
         workingDir = removeDir(fs, currentDir, &args[1], n-1);
     } else if (strcmp(command, "help") == 0) {
         //adam
@@ -38,7 +37,6 @@ struct Dir_Entry * parseInputIntoCommands(struct File_System_Info *fs, struct Di
 struct Dir_Entry *removeDir(struct File_System_Info *fs, struct Dir_Entry *currentDir, char **args, int n) {
     char *fileName = args[0];
     struct Dir_Entry *file;
-    unsigned long toRemove = 0l;
     for (int i = 0; i < currentDir->numFiles; i++) {
         char *buffer = malloc(MINBLOCKSIZE);
         LBAread(buffer, 1, currentDir->fileLBAaddresses[i]);
