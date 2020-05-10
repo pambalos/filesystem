@@ -19,11 +19,10 @@ struct Dir_Entry * parseInputIntoCommands(struct File_System_Info *fs, struct Di
         workingDir = fs->root;
     } else if (strcmp(command, "rm") == 0) {
         //Grayson
-
+        workingDir = removeDir(fs, currentDir, &args[1], n-1);
     } else if (strcmp(command, "help") == 0) {
         //adam
         helpFunc(&args[1]);
-
     } else if (strcmp(command, "touch") == 0) {
         //bradley
         createFile(fs, currentDir, &args[1], n-1);
@@ -34,6 +33,32 @@ struct Dir_Entry * parseInputIntoCommands(struct File_System_Info *fs, struct Di
         createDirectory(fs, currentDir, &args[1], n-1);
     }
     return workingDir;
+}
+
+struct Dir_Entry *removeDir(struct File_System_Info *fs, struct Dir_Entry *currentDir, char **args, int n) {
+    char *fileName = args[0];
+    struct Dir_Entry *file;
+    unsigned long toRemove = 0l;
+    for (int i = 0; i < currentDir->numFiles; i++) {
+        char *buffer = malloc(MINBLOCKSIZE);
+        LBAread(buffer, 1, currentDir->fileLBAaddresses[i]);
+        file = deserialize_de(buffer);
+        if (strcmp(file->name, fileName) == 0) {
+            toRemove = file->selfAddress;
+            //remove the file address from address list
+            unsigned long *addresses = malloc(sizeof(unsigned long)*(file->numFiles-1));
+            int c = 0;
+            for (int j = 0; j < currentDir->numFiles; j++) {
+                if (*(currentDir->fileLBAaddresses+j) != toRemove) {
+                    memcpy((addresses+c), (currentDir->fileLBAaddresses+j), sizeof(long));
+                    c++;
+                }
+            }
+            currentDir->fileLBAaddresses = addresses;
+        }
+    }
+
+    return currentDir;
 }
 
 /**
@@ -182,7 +207,7 @@ void createFile(struct File_System_Info *fs, struct Dir_Entry *current_directory
         } */
 
         memcpy(tmp, current_directory->fileLBAaddresses, sizeof(long)*current_directory->numFiles);
-        tmp[current_directory->numFiles] = newFile->selfAddress;
+        *(tmp+current_directory->numFiles) = newFile->selfAddress;
         current_directory->numFiles++;
         current_directory->fileLBAaddresses = tmp;
     }
