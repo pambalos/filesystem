@@ -180,20 +180,20 @@ void helpFunc(char** args){
         printf("    Exit Status:\n");
         printf("    Return success unless PATTERN is not found or an invalid extension option is given.\n")
     } else if (strcmp(args[0], '~') == 0){
-        printf("help: help [pattern...]\n");
-        printf("    Display information about builtin commands.\n");
+        printf("~: ~/[pattern...]\n");
+        printf("    Acts as a abbreviation for the user's home directory.\n");
         printf("\n");
-        printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
-        printf("    specified, gives detailed hlep on all commands matching PATTERN,\n");
-        printf("    otherwise the list of help topics is printed.\n");
+        printf("    Acts as an abbreviation or shortcut representation of.\n");
+        printf("    the users home or root directory. The following [pattern]\n");
+        printf("    is then the remaining part of the non-abbreviated address.\n");
         printf("\n");
         printf("    Arguments:\n");
-        printf("     PATTERN:  Pattern specifying a help topic\n");
+        printf("     PATTERN:  Pattern specifying an address\n");
         printf("\n");
         printf("    Exit Status:\n");
-        printf("    Return success unless PATTERN is not found or an invalid option is given.\n")
+        printf("    Return success unless PATTERN is not found.\n")
     } else if (strcmp(args[0], 'rm') == 0){
-        printf("help: help [pattern...]\n");
+        printf("rm: help [pattern...]\n");
         printf("    Display information about builtin commands.\n");
         printf("\n");
         printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
@@ -245,7 +245,7 @@ void helpFunc(char** args){
         printf("    Exit Status:\n");
         printf("    Return success unless PATTERN is not found or an invalid option is given.\n")
     } else if (strcmp(args[0], 'mkdir') == 0){
-printf("mkdir: mkdir [pattern...]\n");
+        printf("mkdir: mkdir [pattern...]\n");
         printf("    Display information about builtin commands.\n");
         printf("\n");
         printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
