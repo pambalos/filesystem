@@ -27,7 +27,7 @@ void printHomeAdvice();
 
 void rm();
 
-void helpFunc(char** args);
+void helpFunc(char** args, int n);
 
 struct Dir_Entry *removeDir(struct File_System_Info *fs, struct Dir_Entry *currentDir, char **args, int n);
 
