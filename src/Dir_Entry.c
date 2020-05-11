@@ -66,10 +66,13 @@ char* serialize_de(const struct Dir_Entry *fs) {
     memcpy(buffer+sizeCounter, &fs->sizeInBlocks, (sizeof(long))); sizeCounter += sizeof(long);
     memcpy(buffer+sizeCounter, &fs->contentsLocation, (sizeof(long))); sizeCounter += sizeof(long);
     memcpy(buffer+sizeCounter, &fs->numFiles, (sizeof(int))); sizeCounter += sizeof(int);
-    //memcpy(buffer+sizeCounter, &fs->fileLBAaddresses, (sizeof(unsigned long)*(fs->numFiles)));
+    memcpy(buffer+sizeCounter, fs->fileLBAaddresses, (sizeof(unsigned long)*(fs->numFiles)));
+    /*
     for (int i = 0; i < fs->numFiles; i++) {
-        memcpy((buffer+sizeCounter+sizeof(unsigned long)*i), (fs->fileLBAaddresses+sizeof(unsigned long)*i), (sizeof(unsigned long)));
-    }
+        memcpy((buffer+sizeCounter+(sizeof(unsigned long)*i)), (fs->fileLBAaddresses+(sizeof(unsigned long)*i)), (sizeof(unsigned long)));
+        //memcpy((buffer+sizeCounter), (fs->fileLBAaddresses+sizeof(unsigned long)*i), (sizeof(unsigned long)));
+        //sizeCounter += sizeof(unsigned long);
+    } */
     return buffer;
 }
 
