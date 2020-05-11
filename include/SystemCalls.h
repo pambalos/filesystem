@@ -29,4 +29,6 @@ void rm();
 
 void helpFunc(char** args);
 
+struct Dir_Entry *removeDir(struct File_System_Info *fs, struct Dir_Entry *currentDir, char **args, int n);
+
 #endif //FILESYSTEM_SYSTEMCALLS_H

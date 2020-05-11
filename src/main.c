@@ -74,6 +74,15 @@ int main(int argc, char *argv[]) {
 
     struct File_System_Info *fs = fsinit(argc, argv);
 
+    unsigned long *addresses = malloc(sizeof(unsigned long) *2);
+    unsigned long *addresses2 = malloc(sizeof(unsigned long) *2);
+    *(addresses+0) = 4l;
+    *(addresses+1) = 5l;
+    char *buffer = malloc(512);
+    memset(buffer, 0, 512);
+    memcpy(buffer, addresses, sizeof(unsigned long) *2);
+    memcpy(addresses2, buffer, sizeof(unsigned long) *2);
+
     startFileSystem(fs);
 
     closePartitionSystem();
