@@ -19,18 +19,34 @@ Program arguments can be: test 10000 512
 ###Makefile & GCC:
 Another way to compile this project is through GCC and the ./src/Makefile
 
-From ./src, run 'make', and this will compile the 'main' executable, which cane be run as follows from ./src:
+From ./src, run 'make', and this will compile the 'fsdriver3.c' executable, which cane be run as follows from ./src:
 
-./main [volume_name] [volume_size] [BlockSize] 
+./driver [volume_name] [volume_size] [BlockSize] 
 
 i.e.: 
 
-./main test 10000 512
+./driver test 10000 512
 
 once run, this will launch the filesystem executable which will look for a volume with that name, and open it if it exists, or create a new file system if it does not. 
 
 From the terminal, run 'help' to see available commands.
- 
+
+an example is:
+
+ls -a
+
+mkdir td
+
+cd td
+
+touch t1
+
+ls 
+
+cd ..
+
+ls
+
 ## Commit Process
 
 ### Please do not commit directly to the master branch.
