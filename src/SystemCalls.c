@@ -298,6 +298,7 @@ struct Dir_Entry * changeDirectory(struct Dir_Entry *currentDir, char **args, in
             }
         }
     }
+    return currentDir;
 }
 
 void helpFunc(char** args) {
