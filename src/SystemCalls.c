@@ -29,7 +29,7 @@ struct Dir_Entry * parseInputIntoCommands(struct File_System_Info *fs, struct Di
         createFile(fs, currentDir, &args[1], n-1);
     } else if (strcmp(command, "scp") == 0) {
         //adam
-
+        copyToFromLinux(fs, currentDir, &args[1], n-1);
     } else if (strcmp(command, "mkdir") == 0) {
         createDirectory(fs, currentDir, &args[1], n-1);
     } else if (strcmp(command, "mdset") == 0) {
@@ -38,6 +38,66 @@ struct Dir_Entry * parseInputIntoCommands(struct File_System_Info *fs, struct Di
         testSerialization(fs, currentDir, &args[1]);
     }
     return workingDir;
+}
+
+void copyToFromLinux(struct File_System_Info *fs, struct Dir_Entry *currentDir, char **args, int n) {
+    if (strcmp(args[0], "-t") == 0) { //to linux
+
+        struct Dir_Entry *file;
+        for (int i = 0; i < currentDir->numFiles; i++) {
+            char *buffer = malloc(MINBLOCKSIZE);
+            LBAread(buffer, 1, currentDir->fileLBAaddresses[i]);
+            file = deserialize_de(buffer);
+            if (strcmp(file->name, args[1]) == 0) { //found file to copy to linux
+                FILE *fp;
+                fp = fopen (file->name, "w");
+                fputs("FILE CONTENT", fp);
+                fclose (fp); //close after writing data...
+            }
+        }
+        //linux file stuff
+    } else if (strcmp(args[0], "-f") == 0) { //from linux
+        struct Dir_Entry *file = malloc(MINBLOCKSIZE);
+        FILE *fp;
+        fp = fopen (args[0], "r");
+        //this is where we would copy stuff over
+
+        strcpy(file->name, args[1]);
+        int freeSpace = findSpace(fs, MINBLOCKSIZE);
+        file->selfAddress = freeSpace;
+        file->parentAddress = currentDir->selfAddress;
+        file->file_type = 1;
+        time_t t;   // not a primitive datatype
+        time(&t);
+        file->date_created = malloc(sizeof(char) * 30);
+        file->date_modified = malloc(sizeof(char) * 30);
+        strcpy(file->date_created, ctime(&t));
+        strcpy(file->date_modified, file->date_created);
+        printf("\nNew file copied from Linux at (date and time): %s", ctime(&t));
+        file->sizeInBlocks = 1;
+        file->numFiles = 0;
+        file->fileLBAaddresses = NULL;
+
+        if (currentDir->numFiles == 0) {
+            currentDir->fileLBAaddresses = malloc(sizeof(long));
+            currentDir->fileLBAaddresses[0] = file->selfAddress;
+            currentDir->numFiles = 1;
+        } else {
+            unsigned long *tmp = malloc(sizeof(long)*(currentDir->numFiles+1));
+            memcpy(tmp, currentDir->fileLBAaddresses, sizeof(long)*currentDir->numFiles);
+            *(tmp+(currentDir->numFiles)) = file->selfAddress;
+            currentDir->numFiles++;
+            currentDir->fileLBAaddresses = tmp;
+        }
+        //int c; while ((c = getchar()) != EOF && c != '\n') ;
+
+        LBAwrite(serialize_de(file), file->sizeInBlocks, file->selfAddress);
+        LBAwrite(serialize_de(currentDir), currentDir->sizeInBlocks, currentDir->selfAddress);
+        SetBit(fs->Free_Blocks->fbs, file->selfAddress);
+
+    } else {
+        printf("Invalid input... try again\n");
+    }
 }
 
 void testSerialization(struct File_System_Info *fs, struct Dir_Entry *currentDir, char **args) {

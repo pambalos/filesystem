@@ -9,14 +9,14 @@ Repository for CSC 415 FileSystem assignment. This repository represents a conta
 ./src/obj -> for the generated output files
 
 ## Launch Process
-###CLion:
+### CLion:
 If using CLion, the CMakeLists.txt has the necessary configuration for running it within the IDE. 
 
 In run configuration, the working directory should be: ./src
 
 Program arguments can be: test 10000 512
 
-###Makefile & GCC:
+### Makefile & GCC:
 Another way to compile this project is through GCC and the ./src/Makefile
 
 From ./src, run 'make', and this will compile the 'fsdriver3.c' executable, which cane be run as follows from ./src:
