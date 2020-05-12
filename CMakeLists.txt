@@ -12,7 +12,7 @@ include_directories(${APP_SRC})
 
 set(
         SOURCE_FILES
-        ${APP_SRC}/main.c
+        ${APP_SRC}/fsdriver3.c
         ${APP_SRC}/fsLow.c
         ${APP_SRC}/SystemCalls.c
         src/File_System_Info.c

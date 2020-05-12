@@ -19,6 +19,8 @@ void createDirectory(struct File_System_Info *fs, struct Dir_Entry *current_dire
 
 void createFile(struct File_System_Info *fs, struct Dir_Entry *current_directory, char **args, int n);
 
+void createExplicitFile(struct File_System_Info *fs, struct Dir_Entry *current_directory, char **args, int n);
+
 void listDirs(struct Dir_Entry *currentDir, char **args, int n);
 
 struct Dir_Entry * changeDirectory(struct Dir_Entry *currentDir, char **args, int n);

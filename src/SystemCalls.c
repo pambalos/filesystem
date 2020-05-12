@@ -32,6 +32,8 @@ struct Dir_Entry * parseInputIntoCommands(struct File_System_Info *fs, struct Di
 
     } else if (strcmp(command, "mkdir") == 0) {
         createDirectory(fs, currentDir, &args[1], n-1);
+    } else if (strcmp(command, "mdset") == 0) {
+        createExplicitFile(fs, currentDir, &args[1], n-1);
     } else if (strcmp(command, "test") == 0) {
         testSerialization(fs, currentDir, &args[1]);
     }
@@ -172,6 +174,7 @@ void createFile(struct File_System_Info *fs, struct Dir_Entry *current_directory
     char *buffer = strtok(args[0], ".");
     strcpy(newFile->name, buffer);
 
+    newFile->file_type = 0;
     //now get extension
     buffer = strtok(NULL, " ");
     if (buffer != NULL) {
@@ -253,6 +256,125 @@ void createFile(struct File_System_Info *fs, struct Dir_Entry *current_directory
     int c; while ((c = getchar()) != EOF && c != '\n') ;
 
     LBAwrite(serialize_de(newFile), newFile->sizeInBlocks, lbaLocation);
+    LBAwrite(serialize_de(current_directory), current_directory->sizeInBlocks, current_directory->selfAddress);
+    SetBit(fs->Free_Blocks->fbs, lbaLocation);
+}
+
+void createExplicitFile(struct File_System_Info *fs, struct Dir_Entry *current_directory, char **args, int n) {
+    struct Dir_Entry *newExplicitFile = (struct Dir_Entry*)malloc(sizeof(struct Dir_Entry));
+
+    int lbaLocation = findSpace(fs, fs->blockSize);
+    newExplicitFile->selfAddress = lbaLocation;
+
+    newExplicitFile->parentAddress = current_directory->selfAddress;
+
+    //get the name of the file...
+    char *buffer = strtok(args[0], ".");
+    strcpy(newExplicitFile->name, buffer);
+
+    //now get extension
+    buffer = strtok(NULL, " ");
+    if (buffer != NULL) {
+        while (strcmp(buffer, "txt") != 0 &&
+               strcmp(buffer, "zip") != 0 &&
+               strcmp(buffer, "sh") != 0 &&
+               strcmp(buffer, "exe") != 0 &&
+               strcmp(buffer, "pdf") != 0 &&
+               strcmp(buffer, "bat") != 0 &&
+               strcmp(buffer, "dir") != 0
+                ) {
+            buffer = malloc(30);
+            printf("ERROR: file type not supported, try txt, zip, sh, exe, pdf, bat, dir\n");
+            fgets(buffer, sizeof(buffer), stdin);
+        }
+        newExplicitFile->file_type = 0;
+        if (strcmp(buffer, "zip") != 0) {
+            newExplicitFile->file_type = 1;
+        } else if (strcmp(buffer, "sh") != 0) {
+            newExplicitFile->file_type = 2;
+        } else if (strcmp(buffer, "exe") != 0) {
+            newExplicitFile->file_type = 3;
+        } else if (strcmp(buffer, "pdf") != 0) {
+            newExplicitFile->file_type = 4;
+        } else if (strcmp(buffer, "bat") != 0) {
+            newExplicitFile->file_type = 5;
+        } else if (strcmp(buffer, "dir") != 0) {
+            newExplicitFile->file_type = 6;
+        }
+    } else {
+        newExplicitFile->file_type = 0;
+    }
+
+    int myInt;
+    printf("Enter a permissions level (ie. 644): ");
+    int result = scanf("%d", &myInt);
+    while (result == EOF) {
+        /* ... you're not going to get any input ... */
+        printf("try again...\n");
+        printf("Enter a permissions level (ie. 644): ");
+        result = scanf("%d", &myInt);
+    }
+    newExplicitFile->permissions = myInt;
+
+    time_t t;   // not a primitive datatype
+    time(&t);
+    newExplicitFile->date_created = malloc(sizeof(char) * 30);
+    newExplicitFile->date_modified = malloc(sizeof(char) * 30);
+    strcpy(newExplicitFile->date_created, ctime(&t));
+    strcpy(newExplicitFile->date_modified, newExplicitFile->date_created);
+    printf("\nfile initialized at (date and time): %s", ctime(&t));
+
+    unsigned long sizeInBlocks;
+    printf("Enter number of blocks for file: ");
+    int result2 = scanf("%d", &sizeInBlocks);
+    while (result2 == EOF) {
+        printf("try again...\n");
+        printf("Enter number of blocks for file: ");
+        result2 = scanf("%d", &sizeInBlocks);
+    }
+    newExplicitFile->sizeInBlocks = sizeInBlocks;
+
+    unsigned long contentsLocation;
+    printf("Enter content starting location (default is 0): ");
+    int result3 = scanf("%d", &contentsLocation);
+    while (result3 == EOF) {
+        printf("try again...\n");
+        printf("Enter content starting location (default is 0): ");
+        result3 = scanf("%d", &contentsLocation);
+    }
+    newExplicitFile->contentsLocation = contentsLocation;
+
+    int numFiles;
+    printf("Enter number of files (default is 0): ");
+    int result4 = scanf("%d", &numFiles);
+    while (result4 == EOF) {
+        printf("try again...\n");
+        printf("Enter number of files (default is 0): ");
+        result4 = scanf("%d", &numFiles);
+    }
+    newExplicitFile->numFiles = numFiles;
+
+    if (current_directory->numFiles == 0) {
+        current_directory->fileLBAaddresses = malloc(sizeof(long));
+        current_directory->fileLBAaddresses[0] = newExplicitFile->selfAddress;
+        current_directory->numFiles = 1;
+    } else {
+        unsigned long *tmp = malloc(sizeof(long)*(current_directory->numFiles+1));
+        /*
+        for (int i = 0; i < current_directory->numFiles; i++) {
+            unsigned long myL =0l;
+            memcpy(&myL, (current_directory->fileLBAaddresses+i), sizeof(long));
+            memcpy((tmp+i), (current_directory->fileLBAaddresses+i), sizeof(long));
+        } */
+
+        memcpy(tmp, current_directory->fileLBAaddresses, sizeof(long)*current_directory->numFiles);
+        *(tmp+(current_directory->numFiles)) = newExplicitFile->selfAddress;
+        current_directory->numFiles++;
+        current_directory->fileLBAaddresses = tmp;
+    }
+    int c; while ((c = getchar()) != EOF && c != '\n') ;
+
+    LBAwrite(serialize_de(newExplicitFile), newExplicitFile->sizeInBlocks, lbaLocation);
     LBAwrite(serialize_de(current_directory), current_directory->sizeInBlocks, current_directory->selfAddress);
     SetBit(fs->Free_Blocks->fbs, lbaLocation);
 }
