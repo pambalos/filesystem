@@ -28,13 +28,12 @@ struct Dir_Entry * parseInputIntoCommands(struct File_System_Info *fs, struct Di
         //bradley
         createFile(fs, currentDir, &args[1], n-1);
     } else if (strcmp(command, "scp") == 0) {
-        //adam
-
+       
     } else if (strcmp(command, "mkdir") == 0) {
 
     }
     return workingDir;
-}
+
 
 void createFile(struct File_System_Info *fs, struct Dir_Entry *current_directory, char **args, int n) {
     struct Dir_Entry *newFile = (struct Dir_Entry*)malloc(sizeof(struct Dir_Entry));
@@ -268,3 +267,4 @@ void helpFunc(char** args){
     }
    
 }
+
