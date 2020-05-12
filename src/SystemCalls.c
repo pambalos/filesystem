@@ -28,7 +28,6 @@ struct Dir_Entry * parseInputIntoCommands(struct File_System_Info *fs, struct Di
         //bradley
         createFile(fs, currentDir, &args[1], n-1);
     } else if (strcmp(command, "scp") == 0) {
-        //adam
         copyToFromLinux(fs, currentDir, &args[1], n-1);
     } else if (strcmp(command, "mkdir") == 0) {
         createDirectory(fs, currentDir, &args[1], n-1);
@@ -38,7 +37,7 @@ struct Dir_Entry * parseInputIntoCommands(struct File_System_Info *fs, struct Di
         testSerialization(fs, currentDir, &args[1]);
     }
     return workingDir;
-}
+
 
 void copyToFromLinux(struct File_System_Info *fs, struct Dir_Entry *currentDir, char **args, int n) {
     if (strcmp(args[0], "-t") == 0) { //to linux
@@ -495,118 +494,123 @@ struct Dir_Entry * changeDirectory(struct Dir_Entry *currentDir, char **args, in
 
 void helpFunc(char** args, int n) {
     if (n > 0) {
-        if (strcmp(args[0], "ls") == 0){
-            printf("ls: ls [-a]\n");
-            printf("    Lists the current directory.\n");
-            printf("\n");
-            printf("    Displays the current directory and resulting path from the ROOT directory\n");
-            printf("    if specified.");
-            printf("\n");
-            printf("    Options:\n");
-            printf("     -a:  Displays the current directory detailed.\n");
-            printf("\n");
-            printf("    Exit Status:\n");
-            printf("    Return success always.\n");
-        } else if (strcmp(args[0], "cd") == 0){
-            printf("cd: help [pattern.extension]\n");
-            printf("    Changes the current direcotry to the directory specified by pattern.extension.\n");
-            printf("\n");
-            printf("    Changes the current working directory to the specified directory represented by\n");
-            printf("    pattern.extension. Supports various extensions.");
-            printf("\n");
-            printf("    Extensions:\n");
-            printf("     txt\n");
-            printf("     zip\n");
-            printf("     sh\n");
-            printf("     exe\n");
-            printf("     pdf\n");
-            printf("     bat\n");
-            printf("     dir\n");
-            printf("\n");
-            printf("    Exit Status:\n");
-            printf("    Return success unless PATTERN is not found or an invalid extension option is given.\n");
-        } else if (strcmp(args[0], "~") == 0){
-            printf("help: help [pattern...]\n");
-            printf("    Display information about builtin commands.\n");
-            printf("\n");
-            printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
-            printf("    specified, gives detailed hlep on all commands matching PATTERN,\n");
-            printf("    otherwise the list of help topics is printed.\n");
-            printf("\n");
-            printf("    Arguments:\n");
-            printf("     PATTERN:  Pattern specifying a help topic\n");
-            printf("\n");
-            printf("    Exit Status:\n");
-            printf("    Return success unless PATTERN is not found or an invalid option is given.\n");
-        } else if (strcmp(args[0], "rm") == 0){
-            printf("help: help [pattern...]\n");
-            printf("    Display information about builtin commands.\n");
-            printf("\n");
-            printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
-            printf("    specified, gives detailed hlep on all commands matching PATTERN,\n");
-            printf("    otherwise the list of help topics is printed.\n");
-            printf("\n");
-            printf("    Arguments:\n");
-            printf("     PATTERN:  Pattern specifying a help topic\n");
-            printf("\n");
-            printf("    Exit Status:\n");
-            printf("    Return success unless PATTERN is not found or an invalid option is given.\n");
-        } else if (strcmp(args[0], "help") == 0){
-            printf("help: help [pattern...]\n");
-            printf("    Display information about builtin commands.\n");
-            printf("\n");
-            printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
-            printf("    specified, gives detailed hlep on all commands matching PATTERN,\n");
-            printf("    otherwise the list of help topics is printed.\n");
-            printf("\n");
-            printf("    Arguments:\n");
-            printf("     PATTERN:  Pattern specifying a help topic\n");
-            printf("\n");
-            printf("    Exit Status:\n");
-            printf("    Return success unless PATTERN is not found or an invalid option is given.\n");
-        } else if (strcmp(args[0], "touch") == 0){
-            printf("touch: help [pattern...]\n");
-            printf("    Display information about builtin commands.\n");
-            printf("\n");
-            printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
-            printf("    specified, gives detailed hlep on all commands matching PATTERN,\n");
-            printf("    otherwise the list of help topics is printed.\n");
-            printf("\n");
-            printf("    Arguments:\n");
-            printf("     PATTERN:  Pattern specifying a help topic\n");
-            printf("\n");
-            printf("    Exit Status:\n");
-            printf("    Return success unless PATTERN is not found or an invalid option is given.\n");
-        } else if (strcmp(args[0], "scp") == 0){
-            printf("scp: scp [pattern...]\n");
-            printf("    Display information about builtin commands.\n");
-            printf("\n");
-            printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
-            printf("    specified, gives detailed hlep on all commands matching PATTERN,\n");
-            printf("    otherwise the list of help topics is printed.\n");
-            printf("\n");
-            printf("    Arguments:\n");
-            printf("     PATTERN:  Pattern specifying a help topic\n");
-            printf("\n");
-            printf("    Exit Status:\n");
-            printf("    Return success unless PATTERN is not found or an invalid option is given.\n");
-        } else if (strcmp(args[0], "mkdir") == 0){
-            printf("mkdir: mkdir [pattern...]\n");
-            printf("    Display information about builtin commands.\n");
-            printf("\n");
-            printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
-            printf("    specified, gives detailed hlep on all commands matching PATTERN,\n");
-            printf("    otherwise the list of help topics is printed.\n");
-            printf("\n");
-            printf("    Arguments:\n");
-            printf("     PATTERN:  Pattern specifying a help topic\n");
-            printf("\n");
-            printf("    Exit Status:\n");
-            printf("    Return success unless PATTERN is not found or an invalid option is given.\n");
-        }
+        if (strcmp(args[0], 'ls') == 0){
+        printf("ls: ls [-a]\n");
+        printf("    Lists the current directory.\n");
+        printf("\n");
+        printf("    Displays the current directory and resulting path from the ROOT directory\n");
+        printf("    if specified.");
+        printf("\n");
+        printf("    Options:\n");
+        printf("     -a:  Displays the current directory detailed.\n");
+        printf("\n");
+        printf("    Exit Status:\n");
+        printf("    Return success always.\n")
+    } else if (strcmp(args[0], 'cd') == 0){
+        printf("cd: help [pattern.extension]\n");
+        printf("    Changes the current direcotry to the directory specified by pattern.extension.\n");
+        printf("\n");
+        printf("    Changes the current working directory to the specified directory represented by\n");
+        printf("    pattern.extension. Supports various extensions.")
+        printf("\n");
+        printf("    Extensions:\n");
+        printf("     txt\n");
+        printf("     zip\n");
+        printf("     sh\n");
+        printf("     exe\n");
+        printf("     pdf\n");
+        printf("     bat\n");
+        printf("     dir\n");
+        printf("\n");
+        printf("    Exit Status:\n");
+        printf("    Return success unless PATTERN is not found or an invalid extension option is given.\n")
+    } else if (strcmp(args[0], '~') == 0){
+        printf("~: ~/[pattern...]\n");
+        printf("    Acts as a abbreviation for the user's home directory.\n");
+        printf("\n");
+        printf("    Acts as an abbreviation or shortcut representation of.\n");
+        printf("    the users home or root directory. The following [pattern]\n");
+        printf("    is then the remaining part of the non-abbreviated address.\n");
+        printf("\n");
+        printf("    Arguments:\n");
+        printf("     PATTERN:  Pattern specifying an address\n");
+        printf("\n");
+        printf("    Exit Status:\n");
+        printf("    Return success unless PATTERN is not found.\n")
+    } else if (strcmp(args[0], 'rm') == 0){
+        printf("rm: rm [pattern...]\n");
+        printf("    Removes file at destination matching PATTERN.\n");
+        printf("\n");
+        printf("    Removes the file matching PATTERN at the specified location.\n");
+        printf("    This can be a file, directory, or symbolic link, and the\n");
+        printf("    command checks to see if its a valid file for deletion.\n");
+        printf("\n");
+        printf("    Arguments:\n");
+        printf("     PATTERN:  Pattern specifying location of file for deletion.\n");
+        printf("\n");
+        printf("    Exit Status:\n");
+        printf("    Return success unless PATTERN is not valid or unwriteable, operation\n")
+        printf("    is aborted in the later circumstance.\n");
+    } else if (strcmp(args[0], 'help') == 0){
+        printf("help: help [pattern...]\n");
+        printf("    Display information about builtin commands.\n");
+        printf("\n");
+        printf("    Displays brief summaries of builtin commands. if PATTERN is\n");
+        printf("    specified, gives detailed hlep on all commands matching PATTERN,\n");
+        printf("    otherwise the list of help topics is printed.\n");
+        printf("\n");
+        printf("    Arguments:\n");
+        printf("     PATTERN:  Pattern specifying a help topic\n");
+        printf("\n");
+        printf("    Exit Status:\n");
+        printf("    Return success unless PATTERN is not found or an invalid option is given.\n");
+    } else if (strcmp(args[0], 'touch') == 0){
+        printf("touch: touch [pattern...]\n");
+        printf("    Creates an empty file in the current directory with filename PATTERN.\n");
+        printf("\n");
+        printf("    Creates an empty file with no contents with the filename of PATTERN,\n");
+        printf("    either at the location specified in PATTERN, or in the current directory\n");
+        printf("    if no location is specified.\n");
+        printf("\n");
+        printf("    Arguments:\n");
+        printf("     PATTERN:  Pattern specifying a filename and/or location for file creation.\n");
+        printf("\n");
+        printf("    Exit Status:\n");
+        printf("    Return success unless PATTERN is not found or an invalid option is given.\n")
+    } else if (strcmp(args[0], 'scp') == 0){
+        printf("scp: scp [-rf] [pattern1...] [pattern2...]\n");
+        printf("    Moves files from one file system to the other, depending on flags.\n");
+        printf("\n");
+        printf("    Moves files located in one file system at destination specified\n");
+        printf("    by PATTERN1 to the location in the other file system at the\n");
+        printf("    destination specified by PATTERN2. Direction is based on argument flags.\n");
+        printf("\n");
+        printf("    Options:\n");
+        printf("     -f: moves it forward from our file system to host file system.\n");
+        printf("     -r: moves it reverse from host file system to our file system.\n");
+        printf("\n");
+        printf("    Arguments:\n");
+        printf("     PATTERN1:  First file to be moved.\n");
+        printf("     PATTERN2:  Location first file will be moved to.\n");
+        printf("\n");
+        printf("    Exit Status:\n");
+        printf("    Return success unless PATTERN1 is not found or PATTERN1 or 2 are invalid.\n")
+    } else if (strcmp(args[0], 'mkdir') == 0){
+        printf("mkdir: mkdir [pattern...]\n");
+        printf("    Creates a directory at the location specified by PATTERN.\n");
+        printf("\n");
+        printf("    Creates the directory at PATTERN named PATTERN if said directory\n");
+        printf("    does not already exist.,\n");
+        printf("\n");
+        printf("    Arguments:\n");
+        printf("     PATTERN:  Name and location of directory to be created.\n");
+        printf("\n");
+        printf("    Exit Status:\n");
+        printf("    Return success unless a directory already exists at that location.\n")
     } else {
         printf("The 'help' command must be followed by a command to request help about.\n");
         printf("List of possible commands: 'ls', 'cd', '~', 'rm', 'help', 'touch', 'scp', 'mkdir'\n");
     }
    
 }
+
