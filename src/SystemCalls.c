@@ -233,12 +233,16 @@ void helpFunc(char** args){
         printf("    Exit Status:\n");
         printf("    Return success unless PATTERN is not found or an invalid option is given.\n")
     } else if (strcmp(args[0], 'scp') == 0){
-        printf("scp: scp [pattern1...] [pattern2...]\n");
-        printf("    Moves files from one file system to the other.\n");
+        printf("scp: scp [-rf] [pattern1...] [pattern2...]\n");
+        printf("    Moves files from one file system to the other, depending on flags.\n");
         printf("\n");
         printf("    Moves files located in one file system at destination specified\n");
         printf("    by PATTERN1 to the location in the other file system at the\n");
-        printf("    destination specified by PATTERN2.\n");
+        printf("    destination specified by PATTERN2. Direction is based on argument flags.\n");
+        printf("\n");
+        printf("    Options:\n");
+        printf("     -f: moves it forward from our file system to host file system.\n");
+        printf("     -r: moves it reverse from host file system to our file system.\n");
         printf("\n");
         printf("    Arguments:\n");
         printf("     PATTERN1:  First file to be moved.\n");
