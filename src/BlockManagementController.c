@@ -30,7 +30,6 @@ unsigned long findSpace(struct File_System_Info *fs, int sizeInBytes) {
     for (int i = 0; i < Free_Blocks->Num_Free_Blocks; i++) {
         count = 0;
         marker = i;
-        bool test = CheckBit(Free_Blocks->fbs, i);
         while (CheckBit(Free_Blocks->fbs, i) != true && i < Free_Blocks->Num_Free_Blocks) {
             count++;
             i++;
